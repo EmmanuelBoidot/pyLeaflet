@@ -36,5 +36,4 @@ ax.axis('equal')
 ###############
 # tile_layer = "http://{s}.tile.stamen.com/terrain/{z}/{x}/{y}.jpg"
 tile_layer = "http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.jpg"
-pyLeaflet.plotWithMap(fig,tile_layer = tile_layer,lat=
-35.256000, lon=-79.786989,zoom=6,withAxes=True)
+pyLeaflet.plotWithMap(fig,tile_layer = tile_layer,withAxes=True)

@@ -90,7 +90,7 @@ map.on('zoomend', function() {
 </script>
 """)
 
-def plotWithMap(fig,tile_layer = "http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png",lat=37,lon=-90,zoom=4,withAxes=False, **kwargs):
+def plotWithMap(fig,tile_layer = "http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png",withAxes=False, **kwargs):
   d3_url = urls.D3_LOCAL
   mpld3_url = urls.MPLD3_LOCAL
   # d3_url, mpld3_url = write_ipynb_local_js()
@@ -122,8 +122,8 @@ def plotWithMap(fig,tile_layer = "http://{s}.www.toolserver.org/tiles/bw-mapnik/
     var width = 800,
     height = 500;
 
-    var mouseLat = %d;
-    var mouseLng = %d;
+    var mouseLat = 37;
+    var mouseLng = -90;
 
 
     /*******************************************************************************
@@ -131,7 +131,7 @@ def plotWithMap(fig,tile_layer = "http://{s}.www.toolserver.org/tiles/bw-mapnik/
     * Initialize map layout
     *
     *******************************************************************************/
-    var map = L.map('map').setView([mouseLat, mouseLng],%d);
+    var map = L.map('map').setView([mouseLat, mouseLng],4);
     map.scrollWheelZoom.disable();
 
     L.tileLayer('%s', {
@@ -152,7 +152,7 @@ def plotWithMap(fig,tile_layer = "http://{s}.www.toolserver.org/tiles/bw-mapnik/
     var svg = d3.select(map.getPanes().overlayPane).append('svg').attr('width',5000).attr('height',3000);
     var g   = svg.append('g').attr('class', 'leaflet-zoom-hide').attr('id','%s');
 
-    """%(lat,lon,zoom,tile_layer,figid)
+    """%(tile_layer,figid)
   # tile_layer = "http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png"
   # tile_layer = "http://{s}.tile.stamen.com/terrain/{z}/{x}/{y}.jpg"
 

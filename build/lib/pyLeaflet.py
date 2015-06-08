@@ -55,6 +55,11 @@ mdata.height = mheight
 mdata.width = mwidth
 mdata.axes[0].bbox = [0, 0, 1, 1]
 
+map.fitBounds([
+    [ mdata.axes[0].ydomain[0],mdata.axes[0].xdomain[0] ],
+    [ mdata.axes[0].ydomain[1],mdata.axes[0].xdomain[1] ]
+  ])
+
 axis_offset=30;
 
 withAxes = {{withAxesStr}};

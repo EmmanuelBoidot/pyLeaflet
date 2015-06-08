@@ -18,7 +18,7 @@
     fig.draw();
 
     g.selectAll('.mpld3-toolbar').remove()
-    if (!withAxes){
+    if (withAxes == false){
       g.selectAll('.mpld3-xaxis').remove()
       g.selectAll('.mpld3-yaxis').remove()
     }

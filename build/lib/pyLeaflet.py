@@ -55,7 +55,10 @@ mdata.height = mheight
 mdata.width = mwidth
 mdata.axes[0].bbox = [0, 0, 1, 1]
 
-g.attr("transform", "translate(" + pt0.x + "," + pt1.y + ")").attr("width", mwidth).attr("height", mheight).attr("class", "mpld3-baseaxes");
+axis_offset=30;
+
+svg.attr("width", mwidth+axis_offset).attr("height", mheight+2*axis_offset).style("left",pt0.x-axis_offset+'px').style("top",pt1.y-axis_offset+'px')
+g.attr("transform", "translate(" + axis_offset + "," + axis_offset + ")").attr("class", "mpld3-baseaxes");
 
 pyLeaflet.draw_figure({{ figid }}, mdata);
 
@@ -64,17 +67,20 @@ map.on('zoomstart',function() {
 })
 
 map.on('zoomend', function() {
-pt0 = map.latLngToLayerPoint([ mdata.axes[0].ydomain[0],mdata.axes[0].xdomain[0] ])
-pt1 = map.latLngToLayerPoint([ mdata.axes[0].ydomain[1],mdata.axes[0].xdomain[1] ])
-mheight = pt0.y-pt1.y
-mwidth = pt1.x-pt0.x
+  pt0 = map.latLngToLayerPoint([ mdata.axes[0].ydomain[0],mdata.axes[0].xdomain[0] ])
+  pt1 = map.latLngToLayerPoint([ mdata.axes[0].ydomain[1],mdata.axes[0].xdomain[1] ])
+  mheight = pt0.y-pt1.y
+  mwidth = pt1.x-pt0.x
 
-mdata.height = mheight
-mdata.width = mwidth
+  mdata.height = mheight
+  mdata.width = mwidth
 
-withAxes = {{withAxesStr}};
+  withAxes = {{withAxesStr}};
 
-pyLeaflet.draw_figure({{ figid }}, mdata, withAxes);
+  svg.attr("width", mwidth+axis_offset).attr("height", mheight+2*axis_offset).style("left",pt0.x-axis_offset+'px').style("top",pt1.y-axis_offset+'px')
+  g.attr("transform", "translate(" + axis_offset + "," + axis_offset + ")").attr("class", "mpld3-baseaxes");
+
+  pyLeaflet.draw_figure({{ figid }}, mdata, withAxes);
 });
 </script>
 """)
@@ -103,9 +109,9 @@ def plotWithMap(fig,tile_layer = "http://{s}.www.toolserver.org/tiles/bw-mapnik/
     pyLeaflet_css = f.read()
 
   if withAxes:
-    withAxesStr="True"
+    withAxesStr="true"
   else:
-    withAxesStr="False"
+    withAxesStr="false"
 
   leaflet_init_js = """
     var width = 800,

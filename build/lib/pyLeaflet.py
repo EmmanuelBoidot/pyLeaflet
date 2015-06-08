@@ -10,8 +10,8 @@ from mpld3.mplexporter import Exporter
 from mpld3._server import serve_and_open
 
 MAP_HTML = jinja2.Template("""
-<script type="text/javascript" src="{{ d3_url }}"></script>
-<script type="text/javascript" src="{{ mpld3_url }}"></script>
+<script type="text/javascript">{{ d3_js }}</script>
+<script type="text/javascript">{{ mpld3_js }}</script>
 <script type='text/javascript' src='http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js'></script>
 <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" type="text/css"/>
 
@@ -80,8 +80,8 @@ pyLeaflet.draw_figure({{ figid }}, mdata, withAxes);
 """)
 
 def plotWithMap(fig,tile_layer = "http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png",lat=37,lon=-90,zoom=4,withAxes=False, **kwargs):
-  d3_url = urls.D3_URL
-  mpld3_url = urls.MPLD3_URL
+  d3_url = urls.D3_LOCAL
+  mpld3_url = urls.MPLD3_LOCAL
   # d3_url, mpld3_url = write_ipynb_local_js()
 
   figid = 'fig_' + get_id(fig) + str(int(random.random() * 1E10))
@@ -93,6 +93,10 @@ def plotWithMap(fig,tile_layer = "http://{s}.www.toolserver.org/tiles/bw-mapnik/
 
   extra_css = ""
   extra_js = ""
+  with open(os.path.join(os.path.dirname(mpld3.__file__), 'js/d3.v3.min.js'),'r') as f:
+    d3_js = f.read()
+  with open(os.path.join(os.path.dirname(mpld3.__file__), 'js/mpld3.v0.2.js'),'r') as f:
+    mpld3_js = f.read()
   with open(os.path.join(os.path.dirname(__file__), 'pyLeaflet.js'),'r') as f:
     pyLeaflet_js = f.read()
   with open(os.path.join(os.path.dirname(__file__), 'pyLeaflet.css'),'r') as f:
@@ -151,6 +155,8 @@ def plotWithMap(fig,tile_layer = "http://{s}.www.toolserver.org/tiles/bw-mapnik/
   html = MAP_HTML.render(figid=json.dumps(figid),
                          d3_url=d3_url,
                          mpld3_url=mpld3_url,
+                         d3_js=d3_js,
+                         mpld3_js=mpld3_js,
                          figure_json=json.dumps(figure_json),
                          extra_css=extra_css,
                          extra_js=extra_js,

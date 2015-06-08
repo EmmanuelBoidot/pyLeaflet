@@ -57,10 +57,12 @@ mdata.axes[0].bbox = [0, 0, 1, 1]
 
 axis_offset=30;
 
+withAxes = {{withAxesStr}};
+
 svg.attr("width", mwidth+axis_offset).attr("height", mheight+2*axis_offset).style("left",pt0.x-axis_offset+'px').style("top",pt1.y-axis_offset+'px')
 g.attr("transform", "translate(" + axis_offset + "," + axis_offset + ")").attr("class", "mpld3-baseaxes");
 
-pyLeaflet.draw_figure({{ figid }}, mdata);
+pyLeaflet.draw_figure({{ figid }}, mdata, withAxes);
 
 map.on('zoomstart',function() {
   g.selectAll('.mpld3-baseaxes').remove()
@@ -74,8 +76,6 @@ map.on('zoomend', function() {
 
   mdata.height = mheight
   mdata.width = mwidth
-
-  withAxes = {{withAxesStr}};
 
   svg.attr("width", mwidth+axis_offset).attr("height", mheight+2*axis_offset).style("left",pt0.x-axis_offset+'px').style("top",pt1.y-axis_offset+'px')
   g.attr("transform", "translate(" + axis_offset + "," + axis_offset + ")").attr("class", "mpld3-baseaxes");

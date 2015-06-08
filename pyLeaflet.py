@@ -103,9 +103,9 @@ def plotWithMap(fig,tile_layer = "http://{s}.www.toolserver.org/tiles/bw-mapnik/
     pyLeaflet_css = f.read()
 
   if withAxes:
-    withAxesStr="True"
+    withAxesStr="true"
   else:
-    withAxesStr="False"
+    withAxesStr="false"
 
   leaflet_init_js = """
     var width = 800,

@@ -127,7 +127,7 @@ def plotWithMap(fig,tile_layer = "http://{s}.www.toolserver.org/tiles/bw-mapnik/
     *
     *******************************************************************************/
     var map = L.map('map').setView([mouseLat, mouseLng],4);
-    map.scrollWheelZoom.disable();
+    //map.scrollWheelZoom.disable();
 
     L.tileLayer('%s', {
         attribution: '',

@@ -64,11 +64,16 @@ axis_offset=30;
 
 withAxes = {{withAxesStr}};
 
+svg.attr("width", mwidth+axis_offset).attr("height", mheight+2*axis_offset).style("left",pt0.x-axis_offset+'px').style("top",pt1.y-axis_offset+'px')
+g.attr("transform", "translate(" + axis_offset + "," + axis_offset + ")").attr("class", "mpld3-baseaxes");
+pyLeaflet.draw_figure({{ figid }}, mdata, withAxes);
+
 map.on('zoomstart',function() {
   g.selectAll('.mpld3-baseaxes').remove()
 })
 
 map.on('zoomend', function() {
+  g.selectAll('.mpld3-baseaxes').remove()
   pt0 = map.latLngToLayerPoint([ mdata.axes[0].ydomain[0],mdata.axes[0].xdomain[0] ])
   pt1 = map.latLngToLayerPoint([ mdata.axes[0].ydomain[1],mdata.axes[0].xdomain[1] ])
   mheight = pt0.y-pt1.y
@@ -79,7 +84,6 @@ map.on('zoomend', function() {
 
   svg.attr("width", mwidth+axis_offset).attr("height", mheight+2*axis_offset).style("left",pt0.x-axis_offset+'px').style("top",pt1.y-axis_offset+'px')
   g.attr("transform", "translate(" + axis_offset + "," + axis_offset + ")").attr("class", "mpld3-baseaxes");
-
   pyLeaflet.draw_figure({{ figid }}, mdata, withAxes);
 });
 </script>

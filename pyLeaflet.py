@@ -92,7 +92,7 @@ def plotWithMap(fig,tile_layer = "http://{s}.www.toolserver.org/tiles/bw-mapnik/
   figid = 'fig_' + get_id(fig) + str(int(random.random() * 1E10))
 
   renderer = MPLD3Renderer()
-  Exporter(renderer, close_mpl=False).run(fig)
+  Exporter(renderer, close_mpl=True).run(fig)
 
   fig, figure_json, extra_css, extra_js = renderer.finished_figures[0]
 

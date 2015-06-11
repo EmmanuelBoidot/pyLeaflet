@@ -17,7 +17,7 @@
     pyLeaflet.figures.push(fig);
     fig.draw();
 
-    g.selectAll('.mpld3-toolbar').remove()
+    // g.selectAll('.mpld3-toolbar').remove()
     if (withAxes == false){
       g.selectAll('.mpld3-xaxis').remove()
       g.selectAll('.mpld3-yaxis').remove()
@@ -159,8 +159,6 @@
       z: 0
     };
     function path(vertices, pathcodes) {
-      // console.log(pathcodes)
-      // console.log(vertices)
       var fx = d3.functor(x), fy = d3.functor(y);
       var points = [], segments = [], i_v = 0, i_c = -1, halt = 0, nullpath = false;
       if (!pathcodes) {
@@ -501,18 +499,13 @@
     return this.props.offsetorder === "after" ? transform + offset : offset + transform;
   };
   pyLeaflet_PathCollection.prototype.pathFunc = function(d, i) {
-    return pyLeaflet_path().x(function(d) {
+    a = pyLeaflet_path().x(function(d) {
       return this.pathcoords.x(d[0]);
     }.bind(this)).y(function(d) {
       return this.pathcoords.y(d[1]);
     }.bind(this)).apply(this, getMod(this.props.paths, i));
-    // return pyLeaflet_path().x(function(d) {
-    //   pt = map.latLngToLayerPoint([ this.pathcoords.x(d[0]),this.pathcoords.y(d[1]) ]);
-    //   return pt.x;
-    // }.bind(this)).y(function(d) {
-    //   pt = map.latLngToLayerPoint([ this.pathcoords.x(d[0]),this.pathcoords.y(d[1]) ]);
-    //   return pt.y;
-    // }.bind(this)).apply(this, getMod(this.props.paths, i));
+    console.log(a)
+    return a;
   };
   pyLeaflet_PathCollection.prototype.styleFunc = function(d, i) {
     var styles = {

@@ -86,7 +86,10 @@ map.on('zoomend', function() {
 
 
   g2.attr('transform','translate('+ -svg.node().offsetLeft+','+ -svg.node().offsetTop+')')
-  g2.selectAll('path').attr("d", path)
+  g2.selectAll('.line')
+    .attr("d", ppath)
+  g2.selectAll('.path')
+    .attr("d", pathpath)
   g2.selectAll("circle")
     .attr("cx", function (d) { return map.latLngToLayerPoint(d.latLng).x;})
     .attr("cy", function (d) { return map.latLngToLayerPoint(d.latLng).y;})
@@ -152,7 +155,7 @@ def plotWithMap(fig,tile_layer = "http://{s}.www.toolserver.org/tiles/bw-mapnik/
     }
 
     var transform = d3.geo.transform({point: projectPoint});
-    var path = d3.geo.path().projection(transform);
+    var ppath = d3.geo.path().projection(transform);
 
 
     var svg = d3.select(map.getPanes().overlayPane).append('svg').attr('width',5000).attr('height',3000);

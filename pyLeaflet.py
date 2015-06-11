@@ -61,14 +61,17 @@ map.fitBounds([
   ])
 
 axis_offset=30;
-
 withAxes = {{withAxesStr}};
+
+{{draw_js}}
 
 map.on('zoomstart',function() {
   g.selectAll('.mpld3-baseaxes').remove()
+  //g2.selectAll('path').remove()
 })
 
 map.on('zoomend', function() {
+
   pt0 = map.latLngToLayerPoint([ mdata.axes[0].ydomain[0],mdata.axes[0].xdomain[0] ])
   pt1 = map.latLngToLayerPoint([ mdata.axes[0].ydomain[1],mdata.axes[0].xdomain[1] ])
   mheight = pt0.y-pt1.y
@@ -80,6 +83,13 @@ map.on('zoomend', function() {
   svg.attr("width", mwidth+axis_offset).attr("height", mheight+2*axis_offset).style("left",pt0.x-axis_offset+'px').style("top",pt1.y-axis_offset+'px')
   g.attr("transform", "translate(" + axis_offset + "," + axis_offset + ")").attr("class", "mpld3-baseaxes");
   pyLeaflet.draw_figure({{ figid }}, mdata, withAxes);
+
+
+  g2.attr('transform','translate('+ -svg.node().offsetLeft+','+ -svg.node().offsetTop+')')
+  g2.selectAll('path').attr("d", path)
+  g2.selectAll("circle")
+    .attr("cx", function (d) { return map.latLngToLayerPoint(d.latLng).x;})
+    .attr("cy", function (d) { return map.latLngToLayerPoint(d.latLng).y;})
 });
 </script>
 """)
@@ -104,6 +114,8 @@ def plotWithMap(fig,tile_layer = "http://{s}.www.toolserver.org/tiles/bw-mapnik/
     mpld3_js = f.read()
   with open(os.path.join(os.path.dirname(__file__), 'pyLeaflet.js'),'r') as f:
     pyLeaflet_js = f.read()
+  with open(os.path.join(os.path.dirname(__file__), 'draw.js'),'r') as f:
+    draw_js = f.read()
   with open(os.path.join(os.path.dirname(__file__), 'pyLeaflet.css'),'r') as f:
     pyLeaflet_css = f.read()
 
@@ -145,6 +157,7 @@ def plotWithMap(fig,tile_layer = "http://{s}.www.toolserver.org/tiles/bw-mapnik/
 
     var svg = d3.select(map.getPanes().overlayPane).append('svg').attr('width',5000).attr('height',3000);
     var g   = svg.append('g').attr('class', 'leaflet-zoom-hide').attr('id','%s');
+    var g2   = svg.append('g').attr('class', 'leaflet-zoom-hide');
 
     """%(tile_layer,figid)
   # tile_layer = "http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png"
@@ -162,6 +175,7 @@ def plotWithMap(fig,tile_layer = "http://{s}.www.toolserver.org/tiles/bw-mapnik/
                          mpld3_url=mpld3_url,
                          d3_js=d3_js,
                          mpld3_js=mpld3_js,
+                         draw_js=draw_js,
                          figure_json=json.dumps(figure_json),
                          extra_css=extra_css,
                          extra_js=extra_js,

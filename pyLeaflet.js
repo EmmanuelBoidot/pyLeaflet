@@ -17,7 +17,7 @@
     pyLeaflet.figures.push(fig);
     fig.draw();
 
-    g.selectAll('.mpld3-toolbar').remove()
+    // g.selectAll('.mpld3-toolbar').remove()
     if (withAxes == false){
       g.selectAll('.mpld3-xaxis').remove()
       g.selectAll('.mpld3-yaxis').remove()
@@ -159,6 +159,8 @@
       z: 0
     };
     function path(vertices, pathcodes) {
+      // console.log(pathcodes)
+      // console.log(vertices)
       var fx = d3.functor(x), fy = d3.functor(y);
       var points = [], segments = [], i_v = 0, i_c = -1, halt = 0, nullpath = false;
       if (!pathcodes) {
@@ -586,6 +588,8 @@
   };
   function pyLeaflet_Markers(ax, props) {
     pyLeaflet_PlotElement.call(this, ax, props);
+    // console.log(ax)
+    // console.log(props)
     if (this.props.markerpath !== null) {
       this.marker = this.props.markerpath[0].length == 0 ? null : pyLeaflet.path().call(this.props.markerpath[0], this.props.markerpath[1]);
     } else {
@@ -604,6 +608,7 @@
       zorder: this.props.zorder,
       id: this.props.id
     };
+    // console.log(PCprops)
     this.requiredProps = pyLeaflet_PathCollection.prototype.requiredProps;
     this.defaultProps = pyLeaflet_PathCollection.prototype.defaultProps;
     pyLeaflet_PathCollection.call(this, ax, PCprops);

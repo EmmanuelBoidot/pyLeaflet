@@ -9,5 +9,5 @@ setup(name='pyLeaflet',
       author_email='emmanuel.boidot@gmail.com',
       url='https://github.com/EmmanuelBoidot/pyLeaflet',
       packages=[''],
-      package_data={'': ['pyLeaflet.js','pyLeaflet.css']}
+      package_data={'': ['pyLeaflet.js','draw.js','pyLeaflet.css']}
      )

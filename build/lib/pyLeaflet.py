@@ -82,7 +82,9 @@ map.on('zoomend', function() {
 
   svg.attr("width", mwidth+axis_offset).attr("height", mheight+2*axis_offset).style("left",pt0.x-axis_offset+'px').style("top",pt1.y-axis_offset+'px')
   g.attr("transform", "translate(" + axis_offset + "," + axis_offset + ")").attr("class", "mpld3-baseaxes");
-  pyLeaflet.draw_figure({{ figid }}, mdata, withAxes);
+  
+  if ({{withNonD3ElementsStr}})
+    pyLeaflet.draw_figure({{ figid }}, mdata, withAxes);
 
 
   g2.attr('transform','translate('+ -svg.node().offsetLeft+','+ -svg.node().offsetTop+')')
@@ -97,7 +99,8 @@ map.on('zoomend', function() {
 </script>
 """)
 
-def plotWithMap(fig,tile_layer = "http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png",withAxes=False, **kwargs):
+def plotWithMap(fig,tile_layer = "http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png",
+  withAxes=False,withNonD3Elements=False, **kwargs):
   d3_url = urls.D3_LOCAL
   mpld3_url = urls.MPLD3_LOCAL
   # d3_url, mpld3_url = write_ipynb_local_js()
@@ -126,6 +129,11 @@ def plotWithMap(fig,tile_layer = "http://{s}.www.toolserver.org/tiles/bw-mapnik/
     withAxesStr="true"
   else:
     withAxesStr="false"
+
+  if withNonD3Elements:
+    withNonD3ElementsStr = "true"
+  else:
+    withNonD3ElementsStr = "false"
 
   leaflet_init_js = """
     var width = 800,
@@ -186,6 +194,7 @@ def plotWithMap(fig,tile_layer = "http://{s}.www.toolserver.org/tiles/bw-mapnik/
                          pyLeaflet_css=pyLeaflet_css,
                          leaflet_init_js=leaflet_init_js,
                          tile_layer=tile_layer,
-                         withAxesStr=withAxesStr)
+                         withAxesStr=withAxesStr,
+                         withNonD3ElementsStr=withNonD3ElementsStr)
 
   serve_and_open(html, ip='localhost', port=8888, n_retries=50, files=files)

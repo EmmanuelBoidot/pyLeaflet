@@ -29,10 +29,8 @@ MAP_HTML = jinja2.Template("""
         </div>
     </div>
 </div>
-<div id="figures">
-</div>
 
-<div id={{ figid }}></div>
+<div id={{ figid }} style="width:90%; margin:0 auto;"></div>
 
 <script>
 

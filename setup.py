@@ -8,6 +8,7 @@ setup(name='pyLeaflet',
       author='Emmanuel Boidot',
       author_email='emmanuel.boidot@gmail.com',
       url='https://github.com/EmmanuelBoidot/pyLeaflet',
-      packages=[''],
-      package_data={'': ['pyLeaflet.js','draw.js','pyLeaflet.css']}
+      packages=['pyLeaflet'],
+      package_dir = {'pyLeaflet': 'pyLeaflet'},
+      package_data={'pyLeaflet': ['pyLeaflet/pyLeaflet.js','pyLeaflet/draw.js','pyLeaflet/pyLeaflet.css']}
      )

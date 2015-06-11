@@ -88,7 +88,7 @@ function pathpath(p){
 var lines   = {type:'FeatureCollection',features:[]}
 var markers = {type:'FeatureCollection',features:[]}
 var paths   = {type:'FeatureCollection',features:[]}
-mdata.axes.forEach(function(a){
+mdata.axes.slice(0,1).forEach(function(a){
     a.lines.forEach(function(l){
         line = {
             id: l.id,
@@ -104,13 +104,13 @@ mdata.axes.forEach(function(a){
                 dasharray:l.dasharray,
             }
         }
-        mdata[l.coordinates][l.data].forEach(function(d){
+        mdata.data[l.data].forEach(function(d){
             line.geometry.coordinates.push([d[l.yindex], d[l.xindex]])
         })
         lines.features.push(line)
     })
     a.markers.forEach(function(m){
-        mdata[m.coordinates][m.data].forEach(function(d){
+        mdata.data[m.data].forEach(function(d){
             marker = {
                 id: m.id,
                 type:'Feature',
@@ -144,7 +144,7 @@ mdata.axes.forEach(function(a){
                 dasharray:p.dasharray,
             }
         }
-        mdata[p.coordinates][p.data].forEach(function(d){
+        mdata.data[p.data].forEach(function(d){
             mpath.geometry.coordinates.push([d[p.yindex], d[p.xindex]])
         })
         paths.features.push(mpath)

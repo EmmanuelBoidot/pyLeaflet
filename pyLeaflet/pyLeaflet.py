@@ -29,19 +29,57 @@ MAP_HTML = jinja2.Template("""
         </div>
     </div>
 </div>
+<div id="figures">
+</div>
 
-<!-- <div id={{ figid }}></div> -->
+<div id={{ figid }}></div>
 
 <script>
 
 {{leaflet_init_js}}
 
-!function(mpld3){
-    {{pyLeaflet_js}}
-    {{ extra_js }}
-}(mpld3);
-
 var mdata = {{ figure_json }};
+var mpld3_data = mdata;
+mpld3_data.axes = mdata.axes.slice(1)
+
+mdata = {{ figure_json }};
+mpld3_data.axes.push(mdata.axes[0])
+
+function mpld3_load_lib(url, callback){
+  var s = document.createElement('script');
+  s.src = url;
+  s.async = true;
+  s.onreadystatechange = s.onload = callback;
+  s.onerror = function(){console.warn("failed to load library " + url);};
+  document.getElementsByTagName("head")[0].appendChild(s);
+}
+
+if(typeof(mpld3) !== "undefined" && mpld3._mpld3IsLoaded){
+   // already loaded: just create the figure
+   !function(mpld3){
+       {{ extra_js }}
+       mpld3.draw_figure({{ figid }}, mpld3_data);
+   }(mpld3);
+}else if(typeof define === "function" && define.amd){
+   // require.js is available: use it to load d3/mpld3
+   require.config({paths: {d3: "{{ d3_url[:-3] }}"}});
+   require(["d3"], function(d3){
+      window.d3 = d3;
+      mpld3_load_lib("{{ mpld3_url }}", function(){
+         {{ extra_js }}
+         mpld3.draw_figure({{ figid }}, mpld3_data);
+      });
+    });
+}else{
+    // require.js not available: dynamically load d3 & mpld3
+    mpld3_load_lib("{{ d3_url }}", function(){
+         mpld3_load_lib("{{ mpld3_url }}", function(){
+                 {{ extra_js }}
+                 mpld3.draw_figure({{ figid }}, mpld3_data);
+            })
+         });
+}
+
 pt0 = map.latLngToLayerPoint([ mdata.axes[0].ydomain[0],mdata.axes[0].xdomain[0] ])
 pt1 = map.latLngToLayerPoint([ mdata.axes[0].ydomain[1],mdata.axes[0].xdomain[1] ])
 m0 = new L.Marker([ mdata.axes[0].ydomain[0],mdata.axes[0].xdomain[0] ]);
@@ -60,32 +98,22 @@ map.fitBounds([
     [ mdata.axes[0].ydomain[1],mdata.axes[0].xdomain[1] ]
   ])
 
-axis_offset=30;
-withAxes = {{withAxesStr}};
-
 {{draw_js}}
 
-map.on('zoomstart',function() {
-  g.selectAll('.mpld3-baseaxes').remove()
-  //g2.selectAll('path').remove()
+map.on('dragend', function() {
+  var po = map.getPixelOrigin(),
+      pb = map.getPixelBounds(),
+      offset = map.getPixelOrigin().subtract(map.getPixelBounds().min);
+ background.style("left", -offset.x).style('top',-offset.y);
 })
 
 map.on('zoomend', function() {
-
   pt0 = map.latLngToLayerPoint([ mdata.axes[0].ydomain[0],mdata.axes[0].xdomain[0] ])
   pt1 = map.latLngToLayerPoint([ mdata.axes[0].ydomain[1],mdata.axes[0].xdomain[1] ])
   mheight = pt0.y-pt1.y
   mwidth = pt1.x-pt0.x
 
-  mdata.height = mheight
-  mdata.width = mwidth
-
-  svg.attr("width", mwidth+axis_offset).attr("height", mheight+2*axis_offset).style("left",pt0.x-axis_offset+'px').style("top",pt1.y-axis_offset+'px')
-  g.attr("transform", "translate(" + axis_offset + "," + axis_offset + ")").attr("class", "mpld3-baseaxes");
-  
-  if ({{withNonD3ElementsStr}})
-    pyLeaflet.draw_figure({{ figid }}, mdata, withAxes);
-
+  svg.attr("width", mwidth).attr("height", mheight).style("left",pt0.x+'px').style("top",pt1.y+'px')
 
   g2.attr('transform','translate('+ -svg.node().offsetLeft+','+ -svg.node().offsetTop+')')
   g2.selectAll('.line')
@@ -99,8 +127,7 @@ map.on('zoomend', function() {
 </script>
 """)
 
-def plotWithMap(fig,tile_layer = "http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png",
-  withAxes=False,withNonD3Elements=False, **kwargs):
+def plotWithMap(fig,tile_layer = "http://{s}.tile.stamen.com/terrain/{z}/{x}/{y}.jpg", **kwargs):
   d3_url = urls.D3_LOCAL
   mpld3_url = urls.MPLD3_LOCAL
   # d3_url, mpld3_url = write_ipynb_local_js()
@@ -118,26 +145,16 @@ def plotWithMap(fig,tile_layer = "http://{s}.www.toolserver.org/tiles/bw-mapnik/
     d3_js = f.read()
   with open(os.path.join(os.path.dirname(mpld3.__file__), 'js/mpld3.v0.2.js'),'r') as f:
     mpld3_js = f.read()
-  with open(os.path.join(os.path.dirname(__file__), 'pyLeaflet.js'),'r') as f:
-    pyLeaflet_js = f.read()
   with open(os.path.join(os.path.dirname(__file__), 'draw.js'),'r') as f:
     draw_js = f.read()
   with open(os.path.join(os.path.dirname(__file__), 'pyLeaflet.css'),'r') as f:
     pyLeaflet_css = f.read()
 
-  if withAxes:
-    withAxesStr="true"
-  else:
-    withAxesStr="false"
-
-  if withNonD3Elements:
-    withNonD3ElementsStr = "true"
-  else:
-    withNonD3ElementsStr = "false"
+  # print json.dumps(figure_json)
 
   leaflet_init_js = """
-    var width = 800,
-    height = 500;
+    var width = 1040,
+    height = 640;
 
     var mouseLat = 37;
     var mouseLng = -90;
@@ -165,12 +182,20 @@ def plotWithMap(fig,tile_layer = "http://{s}.www.toolserver.org/tiles/bw-mapnik/
     var transform = d3.geo.transform({point: projectPoint});
     var ppath = d3.geo.path().projection(transform);
 
+    var background = d3.select(map.getPanes().overlayPane)
+        .insert("svg")
+        .attr('width',width+'px')
+        .attr('height',height+'px')
+    background.append('rect')
+      .attr('width',width+'px')
+      .attr('height',height+'px')
+      .style('fill','white')
+      .style('fill-opacity',.8)
 
     var svg = d3.select(map.getPanes().overlayPane).append('svg').attr('width',5000).attr('height',3000);
-    var g   = svg.append('g').attr('class', 'leaflet-zoom-hide').attr('id','%s');
     var g2   = svg.append('g').attr('class', 'leaflet-zoom-hide');
 
-    """%(tile_layer,figid)
+    """%(tile_layer)
   # tile_layer = "http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png"
   # tile_layer = "http://{s}.tile.stamen.com/terrain/{z}/{x}/{y}.jpg"
 
@@ -190,11 +215,8 @@ def plotWithMap(fig,tile_layer = "http://{s}.www.toolserver.org/tiles/bw-mapnik/
                          figure_json=json.dumps(figure_json),
                          extra_css=extra_css,
                          extra_js=extra_js,
-                         pyLeaflet_js=pyLeaflet_js,
                          pyLeaflet_css=pyLeaflet_css,
                          leaflet_init_js=leaflet_init_js,
-                         tile_layer=tile_layer,
-                         withAxesStr=withAxesStr,
-                         withNonD3ElementsStr=withNonD3ElementsStr)
+                         tile_layer=tile_layer)
 
   serve_and_open(html, ip='localhost', port=8888, n_retries=50, files=files)

@@ -59,6 +59,11 @@ ax3.legend(['y','y2'])
 
 ###############
 ###############
-# tile_layer = "http://{s}.tile.stamen.com/terrain/{z}/{x}/{y}.jpg"
-tile_layer = "http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.jpg"
-pyLeaflet.plotWithMap(fig,tile_layer = tile_layer,withAxes=False,withNonD3Elements=False)
+# tile_layer = "http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.jpg"
+tile_layer = "http://{s}.tile.stamen.com/terrain/{z}/{x}/{y}.jpg"
+pyLeaflet.plotWithMap(fig,tile_layer = tile_layer)
+
+
+fout = open('index.html','w')
+fout.write(html)
+fout.close()

@@ -212,6 +212,7 @@ def plotWithMap(fig,tile_layer = "http://{s}.tile.stamen.com/terrain/{z}/{x}/{y}
     """%(tile_layer)
   # tile_layer = "http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png"
   # tile_layer = "http://{s}.tile.stamen.com/terrain/{z}/{x}/{y}.jpg"
+  # tile_layer = "http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.jpg"
 
   kwargs['mpld3_url'] = os.path.dirname(mpld3.__file__)+'/js/mpld3.js'
   kwargs['d3_url'] = os.path.dirname(mpld3.__file__)+'/js/d3.js'
@@ -234,3 +235,4 @@ def plotWithMap(fig,tile_layer = "http://{s}.tile.stamen.com/terrain/{z}/{x}/{y}
                          tile_layer=tile_layer)
 
   serve_and_open(html, ip='localhost', port=8888, n_retries=50, files=files)
+  return html

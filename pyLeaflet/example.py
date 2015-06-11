@@ -5,7 +5,7 @@ import matplotlib.patches as mpatches
 import numpy as np
 import pyLeaflet
 
-fig, ax = plt.subplots()
+N=200
 
 Path = mpath.Path
 path_data = [
@@ -22,18 +22,40 @@ path_data = [
 codes, verts = zip(*path_data)
 path = mpath.Path(verts, codes)
 patch = mpatches.PathPatch(path, facecolor='r', alpha=0.5)
-ax.add_patch(patch)
 
 # plot control points and connecting lines
 x, y = zip(*path.vertices[:-1])
-points = ax.plot(x, y, 'bo', ms=5)
-line = ax.plot(x, y, '-k')
+x2 = 2.5 * np.random.randn(N) -84
+y2 = 2.0 * np.random.randn(N) +32
 
-x2 = 2.5 * np.random.randn(200) -84
-y2 = 2.0 * np.random.randn(200) +32
-line2 = ax.plot(x2, y2, 'ro', ms=5)
-ax.plot(x2, y2, '-g', ms=10)
-ax.axis('equal')
+t = np.linspace(1,100,len(x))
+t2 = np.linspace(1,100,len(x2))
+
+fig, (ax1,ax2,ax3) = plt.subplots(figsize=(18, 18),nrows=3,ncols=1)
+
+ax1.add_patch(patch)
+points = ax1.plot(x, y, 'bo', ms=5)
+line = ax1.plot(x, y, '-k')
+line2 = ax1.plot(x2, y2, 'ro', ms=5)
+ax1.plot(x2, y2, '--g', ms=10)
+ax1.axis('equal')
+ax1.set_xlabel('longitude')
+ax1.set_ylabel('latitude')
+
+ax2.plot(t,x,'-k')
+ax2.plot(t2,x2,'--g')
+ax2.set_xlabel('t')
+ax2.set_ylabel('x')
+ax2.legend(['x','x2'])
+
+ax3.plot(t,y,'-k')
+ax3.plot(t2,y2,'--g')
+ax3.set_xlabel('t')
+ax3.set_ylabel('y')
+ax3.legend(['y','y2'])
+
+
+
 
 ###############
 ###############

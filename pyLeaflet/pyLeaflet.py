@@ -4,7 +4,7 @@ import jinja2
 import json
 import mpld3
 from mpld3 import urls
-from mpld3.utils import get_id,write_ipynb_local_js
+from mpld3.utils import get_id
 from mpld3.mpld3renderer import MPLD3Renderer
 from mpld3.mplexporter import Exporter
 from mpld3._server import serve_and_open
@@ -39,12 +39,18 @@ MAP_HTML = jinja2.Template("""
 {{leaflet_init_js}}
 
 var mdata = {{ figure_json }};
+// This is so that the lat lon figure appears last
 var mpld3_data = mdata;
-mpld3_data.axes = mdata.axes.slice(1)
-
-mdata = {{ figure_json }};
-mpld3_data.axes.push(mdata.axes[0])
-
+if (mpld3_data.axes.length>1){
+  var n = mpld3_data.axes.length;
+  var tmp_bbox = mpld3_data.axes[n-1].bbox;
+  mpld3_data.axes.forEach(function(a,i){
+    if(i<=n-2){
+      mpld3_data.axes[n-i-1].bbox = mpld3_data.axes[n-i-2].bbox;
+    }
+  })
+  mpld3_data.axes[0].bbox = tmp_bbox;
+}
 function mpld3_load_lib(url, callback){
   var s = document.createElement('script');
   s.src = url;
@@ -80,18 +86,26 @@ if(typeof(mpld3) !== "undefined" && mpld3._mpld3IsLoaded){
          });
 }
 
+function showButtons() {
+  toolbar.selectAll('image').transition(750).attr("y", 0);
+}
+function hideButtons() {
+  toolbar.selectAll('image').transition(750).attr("y", 16);
+}
+
+mfigure = d3.selectAll(".mpld3-figure")
+  .on("mouseenter", showButtons)
+  .on("mouseleave", showButtons)
+  .on("touchenter", showButtons)
+  .on("touchstart", showButtons)
+toolbar = d3.selectAll(".mpld3-toolbar").attr("y", mfigure.attr('height')/2)  
+
 pt0 = map.latLngToLayerPoint([ mdata.axes[0].ydomain[0],mdata.axes[0].xdomain[0] ])
 pt1 = map.latLngToLayerPoint([ mdata.axes[0].ydomain[1],mdata.axes[0].xdomain[1] ])
 m0 = new L.Marker([ mdata.axes[0].ydomain[0],mdata.axes[0].xdomain[0] ]);
 m1 = new L.Marker([ mdata.axes[0].ydomain[1],mdata.axes[0].xdomain[1] ]);
 map.addLayer(m0)
 map.addLayer(m1)
-mheight = pt0.y-pt1.y
-mwidth = pt1.x-pt0.x
-
-mdata.height = mheight
-mdata.width = mwidth
-mdata.axes[0].bbox = [0, 0, 1, 1]
 
 map.fitBounds([
     [ mdata.axes[0].ydomain[0],mdata.axes[0].xdomain[0] ],
@@ -124,6 +138,8 @@ map.on('zoomend', function() {
     .attr("cx", function (d) { return map.latLngToLayerPoint(d.latLng).x;})
     .attr("cy", function (d) { return map.latLngToLayerPoint(d.latLng).y;})
 });
+
+map.zoomOut()
 </script>
 """)
 
@@ -190,7 +206,7 @@ def plotWithMap(fig,tile_layer = "http://{s}.tile.stamen.com/terrain/{z}/{x}/{y}
       .attr('width',width+'px')
       .attr('height',height+'px')
       .style('fill','white')
-      .style('fill-opacity',.8)
+      .style('fill-opacity',.6)
 
     var svg = d3.select(map.getPanes().overlayPane).append('svg').attr('width',5000).attr('height',3000);
     var g2   = svg.append('g').attr('class', 'leaflet-zoom-hide');

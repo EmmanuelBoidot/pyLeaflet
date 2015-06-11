@@ -192,4 +192,3 @@ d3paths
     .style('fill-opacity', function(d){return d.properties.alpha})
     .attr('id', function(d){return d.id})
 
-

@@ -15,6 +15,9 @@ pyLeaflet is compatible with python 2.6-2.7 (python 3 not tested). It requires
 
 To install:
 - clone project
+
+     [~]$ git clone https://github.com/EmmanuelBoidot/pyLeaflet.git
+
 - within the git source directory, run
 
      [~]$ python setup.py install

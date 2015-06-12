@@ -143,7 +143,7 @@ map.zoomIn()
 </script>
 """)
 
-def plotWithMap(fig,tile_layer = "http://{s}.tile.stamen.com/terrain/{z}/{x}/{y}.jpg", **kwargs):
+def plotWithMap(fig,tile_layer = "http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png", **kwargs):
   d3_url = urls.D3_LOCAL
   mpld3_url = urls.MPLD3_LOCAL
   # d3_url, mpld3_url = write_ipynb_local_js()

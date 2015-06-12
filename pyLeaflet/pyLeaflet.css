@@ -7,11 +7,9 @@ html, body
 }
 
 body {
-    min-width: 1040px;      /* 2x LC width + RC width */
-    /*overflow: hidden;*/
-    /*background: #c9dbe9;*/
+    min-width: 1040px;
     background: #fff;
-    /*background: -webkit-linear-gradient(top, #c9dbe9 0%, #fff 100%);*/
+    margin: 0 auto;
 }
 h3{
     margin:1em 0 1em 0;

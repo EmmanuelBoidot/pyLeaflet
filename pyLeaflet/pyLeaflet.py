@@ -116,7 +116,7 @@ map.on('dragend', function() {
   var po = map.getPixelOrigin(),
       pb = map.getPixelBounds(),
       offset = map.getPixelOrigin().subtract(map.getPixelBounds().min);
- background.style("left", -offset.x).style('top',-offset.y);
+ background.style("left", -100-offset.x).style('top',-100-offset.y);
 })
 
 map.on('zoomend', function() {
@@ -137,7 +137,7 @@ map.on('zoomend', function() {
     .attr("cy", function (d) { return map.latLngToLayerPoint(d.latLng).y;})
 });
 
-map.zoomOut()
+map.zoomIn()
 </script>
 """)
 
@@ -198,11 +198,11 @@ def plotWithMap(fig,tile_layer = "http://{s}.tile.stamen.com/terrain/{z}/{x}/{y}
 
     var background = d3.select(map.getPanes().overlayPane)
         .insert("svg")
-        .attr('width',width+'px')
-        .attr('height',height+'px')
+        .attr('width',width+200+'px')
+        .attr('height',height+200+'px')
     background.append('rect')
-      .attr('width',width+'px')
-      .attr('height',height+'px')
+      .attr('width',width+200+'px')
+      .attr('height',height+200+'px')
       .style('fill','white')
       .style('fill-opacity',.6)
 

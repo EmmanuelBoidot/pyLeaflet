@@ -96,8 +96,6 @@ mfigure = d3.selectAll(".mpld3-figure")
   .on("mouseleave", showButtons)
   .on("touchenter", showButtons)
   .on("touchstart", showButtons)
-  .style('max-width,1040')
-  .style('float','left')
 toolbar = d3.selectAll(".mpld3-toolbar").attr("y", mfigure.attr('height')/2)  
 
 pt0 = map.latLngToLayerPoint([ mdata.axes[0].ydomain[0],mdata.axes[0].xdomain[0] ])

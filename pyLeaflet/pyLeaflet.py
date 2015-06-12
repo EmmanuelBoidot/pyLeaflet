@@ -105,10 +105,11 @@ m1 = new L.Marker([ mdata.axes[0].ydomain[1],mdata.axes[0].xdomain[1] ]);
 map.addLayer(m0)
 map.addLayer(m1)
 
-map.fitBounds([
-    [ mdata.axes[0].ydomain[0],mdata.axes[0].xdomain[0] ],
-    [ mdata.axes[0].ydomain[1],mdata.axes[0].xdomain[1] ]
-  ])
+if (mdata.axes[0].lines.length+mdata.axes[0].markers.length)
+  map.fitBounds([
+      [ mdata.axes[0].ydomain[0],mdata.axes[0].xdomain[0] ],
+      [ mdata.axes[0].ydomain[1],mdata.axes[0].xdomain[1] ]
+    ])
 
 {{draw_js}}
 

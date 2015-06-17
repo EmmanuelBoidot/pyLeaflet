@@ -1,7 +1,9 @@
 import os
+import tempfile
 import random
 import jinja2
 import json
+
 import mpld3
 from mpld3.utils import get_id
 from mpld3.mpld3renderer import MPLD3Renderer
@@ -201,7 +203,7 @@ def plotWithMap(fig,tile_layer = "http://{s}.tile.stamen.com/terrain/{z}/{x}/{y}
   # tile_layer = "http://{s}.tile.stamen.com/terrain/{z}/{x}/{y}.jpg"
   # tile_layer = "http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.jpg"
 
-  datafile = open('data.js','w')
+  datafile = tempfile.NamedTemporaryFile(delete=False)
   datafile.write('mdata = '+json.dumps(figure_json))
   datafile.close()
 
@@ -230,7 +232,7 @@ def plotWithMap(fig,tile_layer = "http://{s}.tile.stamen.com/terrain/{z}/{x}/{y}
             '/images/marker-shadow.png': ["text/css",
                       open(os.path.join(os.path.dirname(__file__), 'images/marker-shadow.png'),'r').read()],
             '/data.js': ["text/javascript",
-                      open('data.js','r').read()]}
+                      open(datafile.name,'r').read()]}
 
   html = MAP_HTML.render(figid=json.dumps(figid),
                          d3_url=kwargs['d3_url'],
@@ -246,5 +248,5 @@ def plotWithMap(fig,tile_layer = "http://{s}.tile.stamen.com/terrain/{z}/{x}/{y}
                          tile_layer=tile_layer)
 
   serve_and_open(html, ip='localhost', port=8888, n_retries=50, files=files)
-  os.remove('data.js')
+  os.unlink(datafile.name)
   return html

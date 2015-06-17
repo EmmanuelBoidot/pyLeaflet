@@ -219,6 +219,16 @@ def plotWithMap(fig,tile_layer = "http://{s}.tile.stamen.com/terrain/{z}/{x}/{y}
                       open(os.path.join(os.path.dirname(__file__), 'js/leaflet.js'),'r').read()],
             '/leaflet.css': ["text/css",
                       open(os.path.join(os.path.dirname(__file__), 'css/leaflet.css'),'r').read()],
+            '/images/layers-2x.png': ["text/css",
+                      open(os.path.join(os.path.dirname(__file__), 'images/layers-2x.png'),'r').read()],
+            '/images/layers.png': ["text/css",
+                      open(os.path.join(os.path.dirname(__file__), 'images/layers.png'),'r').read()],
+            '/images/marker-icon-2x.png': ["text/css",
+                      open(os.path.join(os.path.dirname(__file__), 'images/marker-icon-2x.png'),'r').read()],
+            '/images/marker-icon.png': ["text/css",
+                      open(os.path.join(os.path.dirname(__file__), 'images/marker-icon.png'),'r').read()],
+            '/images/marker-shadow.png': ["text/css",
+                      open(os.path.join(os.path.dirname(__file__), 'images/marker-shadow.png'),'r').read()],
             '/data.js': ["text/javascript",
                       open('data.js','r').read()]}
 

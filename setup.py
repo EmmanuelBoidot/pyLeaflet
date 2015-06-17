@@ -10,5 +10,14 @@ setup(name='pyLeaflet',
       url='https://github.com/EmmanuelBoidot/pyLeaflet',
       packages=['pyLeaflet'],
       package_dir = {'pyLeaflet': 'pyLeaflet'},
-      package_data={'pyLeaflet': ['js/draw.js','css/pyLeaflet.css','js/leaflet.js','css/leaflet.css']}
+      package_data={'pyLeaflet': ['js/draw.js',
+                                  'css/pyLeaflet.css',
+                                  'js/leaflet.js',
+                                  'css/leaflet.css',
+                                  'images/layers-2x.png',
+                                  'images/layers.png',
+                                  'images/marker-icon-2x.png',
+                                  'images/marker-icon.png',
+                                  'images/marker-shadow.png'
+                      ]}
      )

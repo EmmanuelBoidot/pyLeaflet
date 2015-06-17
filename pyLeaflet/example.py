@@ -61,6 +61,7 @@ ax3.legend(['y','y2'])
 ###############
 # tile_layer = "http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.jpg"
 tile_layer = "http://{s}.tile.stamen.com/terrain/{z}/{x}/{y}.jpg"
+# tile_layer = "http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png"
 html = pyLeaflet.plotWithMap(fig,tile_layer = tile_layer)
 
 

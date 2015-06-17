@@ -10,13 +10,14 @@ from mpld3.mplexporter import Exporter
 from mpld3._server import serve_and_open
 
 MAP_HTML = jinja2.Template("""
-<script type="text/javascript">{{ d3_js }}</script>
-<script type="text/javascript">{{ mpld3_js }}</script>
+<script type="text/javascript" src={{d3_url}}></script>
+<script type="text/javascript" src={{mpld3_url}}></script>
 <script type='text/javascript' src='http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js'></script>
 <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" type="text/css"/>
+<link rel="stylesheet" href={{pyLeaflet_css_url}} type="text/css"/>
+
 
 <style>
-{{pyLeaflet_css}}
 {{ extra_css }}
 </style>
 
@@ -111,8 +112,6 @@ if (mdata.axes[0].lines.length+mdata.axes[0].markers.length)
       [ mdata.axes[0].ydomain[1],mdata.axes[0].xdomain[1] ]
     ])
 
-{{draw_js}}
-
 map.on('dragend', function() {
   var po = map.getPixelOrigin(),
       pb = map.getPixelBounds(),
@@ -138,15 +137,11 @@ map.on('zoomend', function() {
     .attr("cy", function (d) { return map.latLngToLayerPoint(d.latLng).y;})
 });
 
-map.zoomIn()
 </script>
+<script type="text/javascript" src={{draw_js_url}}></script>
 """)
 
-def plotWithMap(fig,tile_layer = "http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png", **kwargs):
-  d3_url = urls.D3_LOCAL
-  mpld3_url = urls.MPLD3_LOCAL
-  # d3_url, mpld3_url = write_ipynb_local_js()
-
+def plotWithMap(fig,tile_layer = "http://{s}.tile.stamen.com/terrain/{z}/{x}/{y}.jpg", **kwargs):
   figid = 'fig_' + get_id(fig) + str(int(random.random() * 1E10))
 
   renderer = MPLD3Renderer()
@@ -156,14 +151,6 @@ def plotWithMap(fig,tile_layer = "http://{s}.www.toolserver.org/tiles/bw-mapnik/
 
   extra_css = ""
   extra_js = ""
-  with open(os.path.join(os.path.dirname(mpld3.__file__), 'js/d3.v3.min.js'),'r') as f:
-    d3_js = f.read()
-  with open(os.path.join(os.path.dirname(mpld3.__file__), 'js/mpld3.v0.2.js'),'r') as f:
-    mpld3_js = f.read()
-  with open(os.path.join(os.path.dirname(__file__), 'draw.js'),'r') as f:
-    draw_js = f.read()
-  with open(os.path.join(os.path.dirname(__file__), 'pyLeaflet.css'),'r') as f:
-    pyLeaflet_css = f.read()
 
   # print json.dumps(figure_json)
 
@@ -215,23 +202,25 @@ def plotWithMap(fig,tile_layer = "http://{s}.www.toolserver.org/tiles/bw-mapnik/
   # tile_layer = "http://{s}.tile.stamen.com/terrain/{z}/{x}/{y}.jpg"
   # tile_layer = "http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.jpg"
 
-  kwargs['mpld3_url'] = os.path.dirname(mpld3.__file__)+'/js/mpld3.js'
-  kwargs['d3_url'] = os.path.dirname(mpld3.__file__)+'/js/d3.js'
-  files = {os.path.dirname(mpld3.__file__)+'/js/mpld3.js': ["text/javascript",
-                         open(urls.MPLD3_LOCAL, 'r').read()],
-           os.path.dirname(mpld3.__file__)+'/js/d3.js': ["text/javascript",
-                      open(urls.D3_LOCAL, 'r').read()]}
+  kwargs['mpld3_url'] = '/mpld3.js'
+  kwargs['d3_url'] = '/d3.js'
+  files = {'/mpld3.js': ["text/javascript",
+                      open(mpld3.urls.MPLD3MIN_LOCAL, 'r').read()],
+           '/d3.js': ["text/javascript",
+                      open(mpld3.urls.D3_LOCAL, 'r').read()],
+           '/draw.js': ["text/javascript",
+                      open(os.path.join(os.path.dirname(__file__), 'js/draw.js'),'r').read()],
+           '/pyLeaflet.css': ["text/css",
+                      open(os.path.join(os.path.dirname(__file__), 'css/pyLeaflet.css'),'r').read()]}
 
   html = MAP_HTML.render(figid=json.dumps(figid),
-                         d3_url=d3_url,
-                         mpld3_url=mpld3_url,
-                         d3_js=d3_js,
-                         mpld3_js=mpld3_js,
-                         draw_js=draw_js,
+                         d3_url=kwargs['d3_url'],
+                         mpld3_url=kwargs['mpld3_url'],
+                         draw_js_url='draw.js',
                          figure_json=json.dumps(figure_json),
                          extra_css=extra_css,
                          extra_js=extra_js,
-                         pyLeaflet_css=pyLeaflet_css,
+                         pyLeaflet_css_url='pyLeaflet.css',
                          leaflet_init_js=leaflet_init_js,
                          tile_layer=tile_layer)
 

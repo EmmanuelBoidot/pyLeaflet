@@ -3,7 +3,6 @@ import random
 import jinja2
 import json
 import mpld3
-from mpld3 import urls
 from mpld3.utils import get_id
 from mpld3.mpld3renderer import MPLD3Renderer
 from mpld3.mplexporter import Exporter
@@ -12,9 +11,10 @@ from mpld3._server import serve_and_open
 MAP_HTML = jinja2.Template("""
 <script type="text/javascript" src={{d3_url}}></script>
 <script type="text/javascript" src={{mpld3_url}}></script>
-<script type='text/javascript' src='http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js'></script>
-<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" type="text/css"/>
+<script type='text/javascript' src={{leaflet_js_url}}></script>
+<link rel="stylesheet" href={{leaflet_css_url}} type="text/css"/>
 <link rel="stylesheet" href={{pyLeaflet_css_url}} type="text/css"/>
+<script type="text/javascript" src={{data_url}}></script>
 
 
 <style>
@@ -37,7 +37,6 @@ MAP_HTML = jinja2.Template("""
 
 {{leaflet_init_js}}
 
-var mdata = {{ figure_json }};
 // This is so that the lat lon figure appears last
 var mpld3_data = mdata;
 if (mpld3_data.axes.length>1){
@@ -202,22 +201,34 @@ def plotWithMap(fig,tile_layer = "http://{s}.tile.stamen.com/terrain/{z}/{x}/{y}
   # tile_layer = "http://{s}.tile.stamen.com/terrain/{z}/{x}/{y}.jpg"
   # tile_layer = "http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.jpg"
 
+  datafile = open('data.js','w')
+  datafile.write('mdata = '+json.dumps(figure_json))
+  datafile.close()
+
   kwargs['mpld3_url'] = '/mpld3.js'
   kwargs['d3_url'] = '/d3.js'
   files = {'/mpld3.js': ["text/javascript",
                       open(mpld3.urls.MPLD3MIN_LOCAL, 'r').read()],
-           '/d3.js': ["text/javascript",
+            '/d3.js': ["text/javascript",
                       open(mpld3.urls.D3_LOCAL, 'r').read()],
-           '/draw.js': ["text/javascript",
+            '/draw.js': ["text/javascript",
                       open(os.path.join(os.path.dirname(__file__), 'js/draw.js'),'r').read()],
-           '/pyLeaflet.css': ["text/css",
-                      open(os.path.join(os.path.dirname(__file__), 'css/pyLeaflet.css'),'r').read()]}
+            '/pyLeaflet.css': ["text/css",
+                      open(os.path.join(os.path.dirname(__file__), 'css/pyLeaflet.css'),'r').read()],
+            '/leaflet.js': ["text/javascript",
+                      open(os.path.join(os.path.dirname(__file__), 'js/leaflet.js'),'r').read()],
+            '/leaflet.css': ["text/css",
+                      open(os.path.join(os.path.dirname(__file__), 'css/leaflet.css'),'r').read()],
+            '/data.js': ["text/javascript",
+                      open('data.js','r').read()]}
 
   html = MAP_HTML.render(figid=json.dumps(figid),
                          d3_url=kwargs['d3_url'],
                          mpld3_url=kwargs['mpld3_url'],
                          draw_js_url='draw.js',
-                         figure_json=json.dumps(figure_json),
+                         data_url='data.js',
+                         leaflet_js_url='leaflet.js',
+                         leaflet_css_url='leaflet.css',
                          extra_css=extra_css,
                          extra_js=extra_js,
                          pyLeaflet_css_url='pyLeaflet.css',
@@ -225,4 +236,5 @@ def plotWithMap(fig,tile_layer = "http://{s}.tile.stamen.com/terrain/{z}/{x}/{y}
                          tile_layer=tile_layer)
 
   serve_and_open(html, ip='localhost', port=8888, n_retries=50, files=files)
+  os.remove('data.js')
   return html

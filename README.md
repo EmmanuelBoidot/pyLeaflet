@@ -24,9 +24,10 @@ To install:
 
 Example Plot
 ----------
-An example script is provided in this project: see ``example.py''. In order to plot geodata using pyLeaflet, proceed as for MatPlotLib, using the longitude as the first coordinate and the latitude as the second coordinate.
+An example script is provided in this project: see ``example.py''. In order to plot geodata using pyLeaflet, proceed as for plotting a (lon,lat) figure on MatPlotLib, (using the longitude as the first coordinate and the latitude as the second coordinate). The first subplot will be rendered on the map.
 
 Next
 ----
 - brush selector for timeseries display on the map
+- images rendering
 - animations (not supported by mpld3)

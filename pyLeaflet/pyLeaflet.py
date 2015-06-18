@@ -143,8 +143,8 @@ map.on('zoomend', function() {
   mwidth = pt1.x-pt0.x
 
   svg.attr("width", mwidth).attr("height", mheight).style("left",pt0.x+'px').style("top",pt1.y+'px')
-
-  g2.attr('transform','translate('+ -svg.node().offsetLeft+','+ -svg.node().offsetTop+')')
+  svg.selectAll('g').attr('transform','translate('+ -svg.node().offsetLeft+','+ -svg.node().offsetTop+')')
+  
   g2.selectAll('.line')
     .attr("d", ppath)
   g2.selectAll('.path')

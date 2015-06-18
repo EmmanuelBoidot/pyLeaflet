@@ -152,6 +152,8 @@ map.on('zoomend', function() {
   g2.selectAll("circle")
     .attr("cx", function (d) { return map.latLngToLayerPoint(d.latLng).x;})
     .attr("cy", function (d) { return map.latLngToLayerPoint(d.latLng).y;})
+  g2.selectAll('.displaypath')
+    .attr("transform", displaypath_translate)
 });
 
 </script>

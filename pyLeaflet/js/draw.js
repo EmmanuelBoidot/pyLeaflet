@@ -84,15 +84,29 @@ function pathpath(p){
     return mypath(vertices, p.geometry.pathcodes)
 }
 
+function displaypath(p){
+    vertices = []; 
+    p.geometry.coordinates.forEach(function(d){
+        vertices.push({x:d[0],y:d[1]})
+    })
+    return mypath(vertices, p.geometry.pathcodes)
+}
+
+function displaypath_translate(d){
+    l=map.latLngToLayerPoint(d.properties.translate); 
+    return "translate("+l.x+","+l.y+")"
+}
+
 
 var lines           = {type:'FeatureCollection',features:[]};
 var markers         = {type:'FeatureCollection',features:[]};
 var paths           = {type:'FeatureCollection',features:[]};
+var displaypaths    = {type:'FeatureCollection',features:[]};
 mdata.axes.slice(0,1).forEach(function(a){
     a.collections.forEach(function(c){
-        c.paths.forEach(function(p){
+        c.paths.forEach(function(p,i){
             mpath = {
-                id: p.id,
+                id: c.id+'path'+i,
                 type:'Feature',
                 geometry:{
                     type:'LineString',
@@ -106,10 +120,18 @@ mdata.axes.slice(0,1).forEach(function(a){
                     alpha: (c.alphas.length>0)?c.alphas[0]:1,
                 }
             }
-            p[0].forEach(function(d){
-                mpath.geometry.coordinates.push([d[1],d[0]])
-            })
-            paths.features.push(mpath)
+            if (c.pathcoordinates=='data'){
+                p[0].forEach(function(d){
+                    mpath.geometry.coordinates.push([d[1],d[0]])
+                })
+                paths.features.push(mpath)
+            } else if (c.pathcoordinates=='display'){
+                mpath.properties.translate = [mdata.data[c.offsets][i][1],mdata.data[c.offsets][i][0]];
+                p[0].forEach(function(d){
+                    mpath.geometry.coordinates.push([d[0],d[1]])
+                })
+                displaypaths.features.push(mpath)
+            }
         })
     })
 
@@ -212,6 +234,21 @@ d3paths
     .attr('stroke-width', function(d){return d.properties.edgewidth})
     .attr("stroke-opacity", function(d){return d.properties.alpha})
     .attr("stroke-dasharray", function(d){return d.properties.dasharray})
+    .style('fill', function(d){return d.properties.facecolor})
+    .style('fill-opacity', function(d){return d.properties.alpha})
+    .attr('id', function(d){return d.id});
+
+d3displaypaths = g2.selectAll('.displaypath')
+    .data(displaypaths.features)
+    .enter()
+    .append("path");
+d3displaypaths
+    .attr("d", displaypath)
+    .attr('class','displaypath')
+    .attr('stroke', function(d){return d.properties.edgecolor})
+    .attr('stroke-width', function(d){return d.properties.edgewidth})
+    .attr("stroke-opacity", function(d){return d.properties.alpha})
+    .attr("transform", displaypath_translate)
     .style('fill', function(d){return d.properties.facecolor})
     .style('fill-opacity', function(d){return d.properties.alpha})
     .attr('id', function(d){return d.id});

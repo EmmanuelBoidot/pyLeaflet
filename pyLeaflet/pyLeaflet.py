@@ -211,7 +211,7 @@ def plotWithMap(fig,tile_layer = "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.
       .attr('width',width+200+'px')
       .attr('height',height+200+'px')
       .style('fill','white')
-      .style('fill-opacity',.6)
+      .style('fill-opacity',.4)
 
     var svg = d3.select(map.getPanes().overlayPane).append('svg').attr('width',5000).attr('height',3000);
     var g2   = svg.append('g').attr('class', 'leaflet-zoom-hide');

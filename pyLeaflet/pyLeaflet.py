@@ -107,7 +107,7 @@ m1 = new L.Marker([ mdata.axes[0].ydomain[1],mdata.axes[0].xdomain[1] ]);
 map.addLayer(m0)
 map.addLayer(m1)
 
-if (mdata.axes[0].lines.length+mdata.axes[0].markers.length)
+if (mdata.axes[0].lines.length+mdata.axes[0].markers.length+mdata.axes[0].paths.length+mdata.axes[0].collections.length)
   map.fitBounds([
       [ mdata.axes[0].ydomain[0],mdata.axes[0].xdomain[0] ],
       [ mdata.axes[0].ydomain[1],mdata.axes[0].xdomain[1] ]
@@ -142,7 +142,7 @@ map.on('zoomend', function() {
 <script type="text/javascript" src={{draw_js_url}}></script>
 """)
 
-def plotWithMap(fig,tile_layer = "http://{s}.tile.stamen.com/terrain/{z}/{x}/{y}.jpg", **kwargs):
+def plotWithMap(fig,tile_layer = "http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png", **kwargs):
   figid = 'fig_' + get_id(fig) + str(int(random.random() * 1E10))
 
   renderer = MPLD3Renderer()

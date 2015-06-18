@@ -85,9 +85,9 @@ function pathpath(p){
 }
 
 
-var lines   = {type:'FeatureCollection',features:[]}
-var markers = {type:'FeatureCollection',features:[]}
-var paths   = {type:'FeatureCollection',features:[]}
+var lines   = {type:'FeatureCollection',features:[]};
+var markers = {type:'FeatureCollection',features:[]};
+var paths   = {type:'FeatureCollection',features:[]};
 mdata.axes.slice(0,1).forEach(function(a){
     a.lines.forEach(function(l){
         line = {
@@ -154,7 +154,7 @@ mdata.axes.slice(0,1).forEach(function(a){
 d3lines = g2.selectAll('.line')
     .data(lines.features)
     .enter()
-    .append("path")
+    .append("path");
 d3lines
     .attr("d", linepath)
     .attr('class','line')
@@ -163,24 +163,24 @@ d3lines
     .attr("stroke-opacity", function(d){return d.properties.alpha})
     .attr("stroke-dasharray", function(d){return d.properties.dasharray})
     .style('fill', 'none')
-    .attr('id', function(d){return d.id})
+    .attr('id', function(d){return d.id});
 
 
 d3markers = g2.selectAll(".marker")
     .data(markers.features).enter()
-    .append('circle')
+    .append('circle');
 d3markers
     .attr('class', function(d){return 'marker marker-'+d.id})
     .attr("cx", function (d) { return map.latLngToLayerPoint(d.latLng).x;})
     .attr("cy", function (d) { return map.latLngToLayerPoint(d.latLng).y;})
     .attr("r", function (d) { return d.properties.radius+"px";})
     .attr("fill-opacity", function(d){return d.properties.alpha})
-    .attr("fill", function(d){return d.properties.facecolor})
+    .attr("fill", function(d){return d.properties.facecolor});
 
 d3paths = g2.selectAll('.path')
     .data(paths.features)
     .enter()
-    .append("path")
+    .append("path");
 d3paths
     .attr("d", pathpath )
     .attr('class','path')
@@ -190,8 +190,8 @@ d3paths
     .attr("stroke-dasharray", function(d){return d.properties.dasharray})
     .style('fill', function(d){return d.properties.facecolor})
     .style('fill-opacity', function(d){return d.properties.alpha})
-    .attr('id', function(d){return d.id})
+    .attr('id', function(d){return d.id});
 
-
-map.zoomIn()
+g2.selectAll('.line')
+    .attr("d", ppath);
 

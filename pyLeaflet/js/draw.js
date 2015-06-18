@@ -85,10 +85,34 @@ function pathpath(p){
 }
 
 
-var lines   = {type:'FeatureCollection',features:[]};
-var markers = {type:'FeatureCollection',features:[]};
-var paths   = {type:'FeatureCollection',features:[]};
+var lines           = {type:'FeatureCollection',features:[]};
+var markers         = {type:'FeatureCollection',features:[]};
+var paths           = {type:'FeatureCollection',features:[]};
 mdata.axes.slice(0,1).forEach(function(a){
+    a.collections.forEach(function(c){
+        c.paths.forEach(function(p){
+            mpath = {
+                id: p.id,
+                type:'Feature',
+                geometry:{
+                    type:'LineString',
+                    coordinates:[],
+                    pathcodes:p[1]
+                },
+                properties:{
+                    edgewidth: (c.edgewidths.length>0)?c.edgewidths[0]:1,
+                    edgecolor: (c.edgecolors.length>0)?c.edgecolors[0]:"#000000",
+                    facecolor: (c.facecolors.length>0)?c.facecolors[0]:"None",
+                    alpha: (c.alphas.length>0)?c.alphas[0]:1,
+                }
+            }
+            p[0].forEach(function(d){
+                mpath.geometry.coordinates.push([d[1],d[0]])
+            })
+            paths.features.push(mpath)
+        })
+    })
+
     a.lines.forEach(function(l){
         line = {
             id: l.id,

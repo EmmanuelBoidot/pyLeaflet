@@ -20,6 +20,22 @@ MAP_HTML = jinja2.Template("""
 
 
 <style>
+body {
+    min-width: {{mapWidth}}px;
+}
+#map-container {
+    height:{{mapHeight}}px;
+}
+#map-container .column {
+  height: {{mapHeight}}px;
+}
+#map {
+  width: {{mapWidth}}px;
+  height: {{mapHeight}}px;
+}
+#map-footer {
+  width:{{mapWidth}}px;
+}
 {{ extra_css }}
 </style>
 
@@ -142,7 +158,7 @@ map.on('zoomend', function() {
 <script type="text/javascript" src={{draw_js_url}}></script>
 """)
 
-def plotWithMap(fig,tile_layer = "http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png", **kwargs):
+def plotWithMap(fig,tile_layer = "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",mapWidth=1040,mapHeight=640, **kwargs):
   figid = 'fig_' + get_id(fig) + str(int(random.random() * 1E10))
 
   renderer = MPLD3Renderer()
@@ -235,6 +251,8 @@ def plotWithMap(fig,tile_layer = "http://{s}.www.toolserver.org/tiles/bw-mapnik/
                       open(datafile.name,'r').read()]}
 
   html = MAP_HTML.render(figid=json.dumps(figid),
+                        mapWidth = mapWidth,
+                        mapHeight=mapHeight,
                          d3_url=kwargs['d3_url'],
                          mpld3_url=kwargs['mpld3_url'],
                          draw_js_url='draw.js',

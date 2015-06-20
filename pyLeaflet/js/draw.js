@@ -114,10 +114,10 @@ mdata.axes.slice(0,1).forEach(function(a){
                     pathcodes:p[1]
                 },
                 properties:{
-                    edgewidth: (c.edgewidths.length>0)?c.edgewidths[0]:1,
-                    edgecolor: (c.edgecolors.length>0)?c.edgecolors[0]:"#000000",
-                    facecolor: (c.facecolors.length>0)?c.facecolors[0]:"None",
-                    alpha: (c.alphas.length>0)?c.alphas[0]:1,
+                    edgewidth: (c.edgewidths.length>=i)?c.edgewidths[i]:1,
+                    edgecolor: (c.edgecolors.length>=i)?c.edgecolors[i]:"#000000",
+                    facecolor: (c.facecolors.length>=i)?c.facecolors[i]:"None",
+                    alpha: (c.alphas.length>=i)?c.alphas[i]:1,
                 }
             }
             if (c.pathcoordinates=='data'){

@@ -57,16 +57,16 @@ body {
 
 // This is so that the lat lon figure appears last
 var mpld3_data = mdata;
-if (mpld3_data.axes.length>1){
-  var n = mpld3_data.axes.length;
-  var tmp_bbox = mpld3_data.axes[n-1].bbox;
-  mpld3_data.axes.forEach(function(a,i){
-    if(i<=n-2){
-      mpld3_data.axes[n-i-1].bbox = mpld3_data.axes[n-i-2].bbox;
-    }
-  })
-  mpld3_data.axes[0].bbox = tmp_bbox;
-}
+//if (mpld3_data.axes.length>1){
+//  var n = mpld3_data.axes.length;
+//  var tmp_bbox = mpld3_data.axes[n-1].bbox;
+//  mpld3_data.axes.forEach(function(a,i){
+//    if(i<=n-2){
+//      mpld3_data.axes[n-i-1].bbox = mpld3_data.axes[n-i-2].bbox;
+//    }
+//  })
+//  mpld3_data.axes[0].bbox = tmp_bbox;
+//}
 function mpld3_load_lib(url, callback){
   var s = document.createElement('script');
   s.src = url;
@@ -123,11 +123,13 @@ m1 = new L.Marker([ mdata.axes[0].ydomain[1],mdata.axes[0].xdomain[1] ]);
 map.addLayer(m0)
 map.addLayer(m1)
 
-if (mdata.axes[0].lines.length+mdata.axes[0].markers.length+mdata.axes[0].paths.length+mdata.axes[0].collections.length)
+if (mdata.axes[0].lines.length+mdata.axes[0].markers.length+mdata.axes[0].paths.length+mdata.axes[0].collections.length){
   map.fitBounds([
       [ mdata.axes[0].ydomain[0],mdata.axes[0].xdomain[0] ],
       [ mdata.axes[0].ydomain[1],mdata.axes[0].xdomain[1] ]
-    ])
+    ]);
+  map.zoomIn();
+}
 
 map.on('dragend', function() {
   var po = map.getPixelOrigin(),

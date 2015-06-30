@@ -35,11 +35,13 @@ stroke-width: .5px;
 }
 
 #map-container {
-    height:640px;
+    min-height:640px;
+    height:80%;
     border-style: solid;
     border-width: medium;
     border-color: rgb(200,200,200);
-    width: 1040px;
+    min-width: 1040px;
+    width:80%;
     margin: 10px auto 10px auto;
     background: white;
 }
@@ -47,11 +49,12 @@ stroke-width: .5px;
 #map-container .column {
   position: relative;
   float: left;
-  height: 640px;
+  height: 100%;
+  width:100%;
 }
 #map {
-  width: 1040px;
-  height: 640px;
+  width:100%;
+  height: 100%;
   float: left;
 }
 #information_panel {

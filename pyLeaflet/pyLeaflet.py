@@ -162,7 +162,7 @@ map.on('zoomend', function() {
 <script type="text/javascript" src={{draw_js_url}}></script>
 """)
 
-def plotWithMap(fig,tile_layer = "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",mapWidth=1040,mapHeight=640, **kwargs):
+def plotWithMap(fig,tile_layer = "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",mapWidth=1040,mapHeight=800, **kwargs):
   figid = 'fig_' + get_id(fig) + str(int(random.random() * 1E10))
 
   renderer = MPLD3Renderer()
@@ -207,11 +207,11 @@ def plotWithMap(fig,tile_layer = "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.
 
     var background = d3.select(map.getPanes().overlayPane)
         .insert("svg")
-        .attr('width',width+200+'px')
-        .attr('height',height+200+'px')
+        .attr('width',width+500+'px')
+        .attr('height',height+500+'px')
     background.append('rect')
-      .attr('width',width+200+'px')
-      .attr('height',height+200+'px')
+      .attr('width',width+500+'px')
+      .attr('height',height+500+'px')
       .style('fill','white')
       .style('fill-opacity',.4)
 

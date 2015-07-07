@@ -38,6 +38,7 @@ points = ax1.plot(x, y, 'bo', ms=5)
 line = ax1.plot(x, y, '-k')
 line2 = ax1.plot(x2, y2, 'ro', ms=5)
 ax1.plot(x2, y2, '--g', ms=10)
+ax1.plot([-73.9857],[40.7484],'ko',ms=10) # this should draw a black dot on top of the empire state building
 ax1.axis('equal')
 ax1.set_xlabel('longitude')
 ax1.set_ylabel('latitude')

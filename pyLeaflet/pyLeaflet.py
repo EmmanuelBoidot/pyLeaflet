@@ -144,11 +144,7 @@ map.on('zoomend', function() {
   mheight = pt0.y-pt1.y
   mwidth = pt1.x-pt0.x
 
-  //a = svg.node().getBoundingClientRect()
-  //b = d3.select("#map")[0][0].getBoundingClientRect()
-
   svg.attr("width", mwidth).attr("height", mheight).style("left",pt0.x+'px').style("top",pt1.y+'px')
-  //svg.selectAll('g').attr('transform','translate('+ -svg.node().offsetLeft+','+ -svg.node().offsetTop+')')
   svg.selectAll('g').attr('transform','translate('+ -pt0.x+','+ -pt1.y+')')
   
   g2.selectAll('.line')

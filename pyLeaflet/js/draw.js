@@ -120,17 +120,45 @@ mdata.axes.slice(0,1).forEach(function(a){
                     alpha: (c.alphas.length>=i)?c.alphas[i]:c.alphas[0],
                 }
             }
-            if (c.pathcoordinates=='data'){
+            // means the path is actual signal
+            if (c.coordinates == 'data' || c.pathcoordinates == 'data'){
                 p[0].forEach(function(d){
                     mpath.geometry.coordinates.push([d[1],d[0]])
                 })
                 paths.features.push(mpath)
-            } else if (c.pathcoordinates=='display'){
-                mpath.properties.translate = [mdata.data[c.offsets][i][1],mdata.data[c.offsets][i][0]];
-                p[0].forEach(function(d){
-                    mpath.geometry.coordinates.push([d[0],d[1]])
-                })
-                displaypaths.features.push(mpath)
+            // means the path is a symbol
+            } else if (c.pathcoordinates == "display"){
+                if (c.offsetcoordinates == "display"){
+                    mpath.properties.translate = [mdata.data[c.offsets][i][1],mdata.data[c.offsets][i][0]];
+                    p[0].forEach(function(d){
+                        mpath.geometry.coordinates.push([d[0],d[1]])
+                    })
+                    displaypaths.features.push(mpath)
+                } else if (c.offsetcoordinates == "data"){
+                    mpath.properties.translate = [0,0]
+                    mdata.data[c.offsets].forEach(function(o,j){
+                        mpath = {
+                            id: c.id+'path'+j,
+                            type:'Feature',
+                            geometry:{
+                                type:'LineString',
+                                coordinates:[],
+                                pathcodes:p[1]
+                            },
+                            properties:{
+                                edgewidth: (c.edgewidths.length>=j)?c.edgewidths[j]:c.edgewidths[0],
+                                edgecolor: (c.edgecolors.length>=j)?c.edgecolors[j]:c.edgecolors[0],
+                                facecolor: (c.facecolors.length>=j)?c.facecolors[j]:c.facecolors[0],
+                                alpha: (c.alphas.length>=j)?c.alphas[j]:c.alphas[0],
+                                translate : [0,0]
+                            }
+                        }
+                        p[0].forEach(function(d){
+                            mpath.geometry.coordinates.push([o[0]+d[0],o[1]+d[1]])
+                        })
+                        paths.features.push(mpath)
+                    })
+                }
             }
         })
     })

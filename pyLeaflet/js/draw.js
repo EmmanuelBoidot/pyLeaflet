@@ -1,3 +1,5 @@
+var transform = ["", "-webkit-", "-moz-", "-ms-", "-o-"].reduce(function(p, v) { return v + "transform" in document.body.style ? v : p; }) + "transform";
+
 var lineFunc = d3.svg.line()
     .x(function(d) {
       return map.latLngToLayerPoint(d.latLng).x;
@@ -84,12 +86,29 @@ function pathpath(p){
     return mypath(vertices, p.geometry.pathcodes)
 }
 
+function collectionpath(p){
+    vertices = [];
+    l = project(p.geometry.offsetcoordinates)
+    p.geometry.coordinates.forEach(function(d){
+        vertices.push({x:d[0]+l[0],y:d[1]+l[1]})
+    })
+    return mypath(vertices, p.geometry.pathcodes)
+}
+
 function displaypath(p){
     vertices = []; 
     p.geometry.coordinates.forEach(function(d){
         vertices.push({x:d[0],y:d[1]})
     })
     return mypath(vertices, p.geometry.pathcodes)
+}
+
+function collectionpath_transformFunc(d) {
+    var t = d.properties.transform;
+    var transform = t === undefined || t.length == 0 ? "" : d3.transform("matrix(" + t + ")").toString();
+    var l = project(d.geometry.offsetcoordinates)
+    var offset = d === null || typeof d === "undefined" ? "translate(0, 0)" : "translate(" + l[0]+','+ l[1] + ")";
+    return offset+transform;
 }
 
 function displaypath_translate(d){
@@ -100,8 +119,10 @@ function displaypath_translate(d){
 
 var lines           = {type:'FeatureCollection',features:[]};
 var markers         = {type:'FeatureCollection',features:[]};
+var markerpaths     = {type:'FeatureCollection',features:[]};
 var paths           = {type:'FeatureCollection',features:[]};
 var displaypaths    = {type:'FeatureCollection',features:[]};
+var collectionpaths = {type:'FeatureCollection',features:[]};
 mdata.axes.slice(0,1).forEach(function(a){
     a.collections.forEach(function(c){
         c.paths.forEach(function(p,i){
@@ -118,6 +139,7 @@ mdata.axes.slice(0,1).forEach(function(a){
                     edgecolor: (c.edgecolors.length>=i)?c.edgecolors[i]:c.edgecolors[0],
                     facecolor: (c.facecolors.length>=i)?c.facecolors[i]:c.facecolors[0],
                     alpha: (c.alphas.length>=i)?c.alphas[i]:c.alphas[0],
+                    zorder: c.zorder
                 }
             }
             // means the path is actual signal
@@ -143,6 +165,7 @@ mdata.axes.slice(0,1).forEach(function(a){
                             geometry:{
                                 type:'LineString',
                                 coordinates:[],
+                                offsetcoordinates:o,
                                 pathcodes:p[1]
                             },
                             properties:{
@@ -150,17 +173,20 @@ mdata.axes.slice(0,1).forEach(function(a){
                                 edgecolor: (c.edgecolors.length>=j)?c.edgecolors[j]:c.edgecolors[0],
                                 facecolor: (c.facecolors.length>=j)?c.facecolors[j]:c.facecolors[0],
                                 alpha: (c.alphas.length>=j)?c.alphas[j]:c.alphas[0],
-                                translate : [0,0]
+                                translate: [0,0],
+                                transform: c.pathtransforms[j],
+                                zorder: c.zorder
                             }
                         }
                         p[0].forEach(function(d){
-                            mpath.geometry.coordinates.push([o[0]+d[0],o[1]+d[1]])
+                            mpath.geometry.coordinates.push([d[0],d[1]])
                         })
-                        paths.features.push(mpath)
+                        collectionpaths.features.push(mpath)
                     })
                 }
             }
         })
+        a
     })
 
     a.lines.forEach(function(l){
@@ -185,20 +211,45 @@ mdata.axes.slice(0,1).forEach(function(a){
     })
     a.markers.forEach(function(m){
         mdata.data[m.data].forEach(function(d){
-            marker = {
+            // marker = {
+            //     id: m.id,
+            //     type:'Feature',
+            //     latLng: L.latLng(d[m.yindex], d[m.xindex]),
+            //     geometry:{
+            //         type:'LineString',
+            //         coordinates:[],
+            //         pathcodes:m.pathcodes
+            //     },
+            //     properties:{
+            //         edgewidth:m.edgewidth,
+            //         edgecolor:m.edgecolor,
+            //         facecolor:m.facecolor,
+            //         alpha:m.alpha,
+            //         markertype:'circle',
+            //         radius:m.markerpath[0][0][1]
+            //     }
+            // }
+            // markers.features.push(marker)
+
+            mpath = {
                 id: m.id,
                 type:'Feature',
-                latLng: L.latLng(d[m.yindex], d[m.xindex]),
+                geometry:{
+                    type:'LineString',
+                    offsetcoordinates:d,
+                    coordinates:m.markerpath[0],
+                    pathcodes:m.markerpath[1]
+                },
                 properties:{
                     edgewidth:m.edgewidth,
                     edgecolor:m.edgecolor,
                     facecolor:m.facecolor,
                     alpha:m.alpha,
-                    markertype:'circle',
-                    radius:m.markerpath[0][0][1]
+                    dasharray:m.dasharray,
+                    zorder:m.zorder,
                 }
             }
-            markers.features.push(marker)
+            markerpaths.features.push(mpath)
         })
     })
     a.paths.forEach(function(p){
@@ -216,6 +267,7 @@ mdata.axes.slice(0,1).forEach(function(a){
                 facecolor:p.facecolor,
                 alpha:p.alpha,
                 dasharray:p.dasharray,
+                zorder: p.zorder
             }
         }
         mdata.data[p.data].forEach(function(d){
@@ -236,20 +288,40 @@ d3lines
     .attr('stroke-width', function(d){return d.properties.width})
     .attr("stroke-opacity", function(d){return d.properties.alpha})
     .attr("stroke-dasharray", function(d){return d.properties.dasharray})
+    .attr("vector-effect","non-scaling-stroke")
+    .style('z-index', function(d){return d.properties.zorder})
     .style('fill', 'none')
     .attr('id', function(d){return d.id});
 
 
-d3markers = g2.selectAll(".marker")
-    .data(markers.features).enter()
-    .append('circle');
-d3markers
-    .attr('class', function(d){return 'marker marker-'+d.id})
-    .attr("cx", function (d) { return map.latLngToLayerPoint(d.latLng).x;})
-    .attr("cy", function (d) { return map.latLngToLayerPoint(d.latLng).y;})
-    .attr("r", function (d) { return d.properties.radius+"px";})
-    .attr("fill-opacity", function(d){return d.properties.alpha})
-    .attr("fill", function(d){return d.properties.facecolor});
+// d3markers = g2.selectAll(".marker")
+//     .data(markers.features).enter()
+//     .append('circle');
+// d3markers
+//     .attr('class', function(d){return 'marker marker-'+d.id})
+//     .attr("cx", function (d) { return map.latLngToLayerPoint(d.latLng).x;})
+//     .attr("cy", function (d) { return map.latLngToLayerPoint(d.latLng).y;})
+//     .attr("r", function (d) { return d.properties.radius+"px";})
+//     .attr("fill-opacity", function(d){return d.properties.alpha})
+//     .attr("fill", function(d){return d.properties.facecolor});
+
+d3markerpaths = g2.selectAll('.markerpath')
+    .data(markerpaths.features)
+    .enter()
+    .append("path");
+d3markerpaths
+    .attr("d", displaypath)
+    .attr('class','markerpath')
+    .attr('stroke', function(d){return d.properties.edgecolor})
+    .attr('stroke-width', function(d){return d.properties.edgewidth})
+    .attr("stroke-opacity", function(d){return d.properties.alpha})
+    .attr("transform", collectionpath_transformFunc)
+    .attr("vector-effect","non-scaling-stroke")
+    // .style(transform, function(d){ return "matrix3d("+d.properties.transform + ")";})
+    .style('fill', function(d){return d.properties.facecolor})
+    .style('fill-opacity', function(d){return d.properties.alpha})
+    .style('z-index', function(d){return d.properties.zorder})
+    .attr('id', function(d){return d.id});
 
 d3paths = g2.selectAll('.path')
     .data(paths.features)
@@ -264,6 +336,8 @@ d3paths
     .attr("stroke-dasharray", function(d){return d.properties.dasharray})
     .style('fill', function(d){return d.properties.facecolor})
     .style('fill-opacity', function(d){return d.properties.alpha})
+    .style('z-index', function(d){return d.properties.zorder})
+    .attr("vector-effect","non-scaling-stroke")
     .attr('id', function(d){return d.id});
 
 d3displaypaths = g2.selectAll('.displaypath')
@@ -279,6 +353,26 @@ d3displaypaths
     .attr("transform", displaypath_translate)
     .style('fill', function(d){return d.properties.facecolor})
     .style('fill-opacity', function(d){return d.properties.alpha})
+    .style('z-index', function(d){return d.properties.zorder})
+    .attr("vector-effect","non-scaling-stroke")
+    .attr('id', function(d){return d.id});
+
+d3collectionpaths = g2.selectAll('.collectionpath')
+    .data(collectionpaths.features)
+    .enter()
+    .append("path");
+d3collectionpaths
+    .attr("d", displaypath)
+    .attr('class','collectionpath')
+    .attr('stroke', function(d){return d.properties.edgecolor})
+    .attr('stroke-width', function(d){return d.properties.edgewidth})
+    .attr("stroke-opacity", function(d){return d.properties.alpha})
+    .attr("transform", collectionpath_transformFunc)
+    .attr("vector-effect","non-scaling-stroke")
+    // .style(transform, function(d){ return "matrix3d("+d.properties.transform + ")";})
+    .style('fill', function(d){return d.properties.facecolor})
+    .style('fill-opacity', function(d){return d.properties.alpha})
+    .style('z-index', function(d){return d.properties.zorder})
     .attr('id', function(d){return d.id});
 
 g2.selectAll('.line')

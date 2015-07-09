@@ -2,10 +2,11 @@
 import matplotlib.pyplot as plt
 import matplotlib.path as mpath
 import matplotlib.patches as mpatches
+import matplotlib as mpl
 import numpy as np
 import pyLeaflet
 
-N=200
+N=1000
 
 Path = mpath.Path
 path_data = [
@@ -27,6 +28,8 @@ patch = mpatches.PathPatch(path, facecolor='r', alpha=0.5)
 x, y = zip(*path.vertices[:-1])
 x2 = 2.5 * np.random.randn(N) -84
 y2 = 2.0 * np.random.randn(N) +32
+colors = np.random.rand(N)
+size = np.pi * (15 * np.random.rand(N))**2
 
 t = np.linspace(1,100,len(x))
 t2 = np.linspace(1,100,len(x2))
@@ -34,11 +37,10 @@ t2 = np.linspace(1,100,len(x2))
 fig, (ax1,ax2,ax3) = plt.subplots(figsize=(18, 18),nrows=3,ncols=1)
 
 ax1.add_patch(patch)
-points = ax1.plot(x, y, 'bo', ms=5)
+points = ax1.plot(x, y, 'b^', ms=10)
 line = ax1.plot(x, y, '-k')
-line2 = ax1.plot(x2, y2, 'ro', ms=5)
-ax1.plot(x2, y2, '--g', ms=10)
-ax1.plot([-73.9857],[40.7484],'ko',ms=10) # this should draw a black dot on top of the empire state building
+scatter = ax1.scatter(x2, y2, s=size, c=colors, alpha=0.5)
+ax1.plot([-73.9857],[40.7484],'ro',ms=10) # this should draw a black dot on top of the empire state building
 ax1.axis('equal')
 ax1.set_xlabel('longitude')
 ax1.set_ylabel('latitude')
@@ -56,13 +58,10 @@ ax3.set_ylabel('y')
 ax3.legend(['y','y2'])
 
 
-
-
 ###############
 ###############
 # tile_layer = "http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.jpg"
 tile_layer = "http://{s}.tile.stamen.com/terrain/{z}/{x}/{y}.jpg"
-# tile_layer = "http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png"
 html = pyLeaflet.plotWithMap(fig,tile_layer = tile_layer)
 
 

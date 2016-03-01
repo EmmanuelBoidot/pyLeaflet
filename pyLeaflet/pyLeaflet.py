@@ -273,6 +273,6 @@ def plotWithMap(fig,tile_layer = "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.
                          leaflet_init_js=leaflet_init_js,
                          tile_layer=tile_layer)
 
-  serve_and_open(html, ip='localhost', port=8888, n_retries=50, files=files)
+  serve_and_open(html, ip='localhost', port=8080, n_retries=50, files=files)
   os.unlink(datafile.name)
   return html

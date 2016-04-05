@@ -298,7 +298,7 @@ def plotWithMap(fig,tile_layer = "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.
                          leaflet_init_js=leaflet_init_js,
                          tile_layer=tile_layer)
 
-  if saveAs!="":
+  if saveAs is not None:
     with open(saveAs, "w") as text_file:
       text_file.write(html)
   

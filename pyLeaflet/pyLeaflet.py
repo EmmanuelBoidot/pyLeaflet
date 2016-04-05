@@ -171,7 +171,7 @@ map.on('zoomend', function() {
 </script>
 """)
 
-def plotWithMap(fig,tile_layer = "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",mapWidth=1040,mapHeight=800,saveAs="", **kwargs):
+def plotWithMap(fig,tile_layer = "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",mapWidth=1040,mapHeight=800,saveAs=None, **kwargs):
   figid = 'fig_' + get_id(fig) + str(int(random.random() * 1E10))
 
   renderer = MPLD3Renderer()
@@ -236,7 +236,7 @@ def plotWithMap(fig,tile_layer = "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.
   datafile.write('mdata = '+json.dumps(figure_json))
   datafile.close()
 
-  if saveAs=="":
+  if saveAs is None:
     kwargs['mpld3_url'] = '/mpld3.js'
     kwargs['d3_url'] = '/d3.js'
     kwargs['leaflet_js_url'] = '/leaflet.js'

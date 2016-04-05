@@ -7,7 +7,7 @@ import numpy as np
 import pyLeaflet
 
 
-def example1(save_to_file=None):
+def example1(saveAs=None):
     N=1000
 
     Path = mpath.Path
@@ -65,16 +65,11 @@ def example1(save_to_file=None):
     ###############
     # tile_layer = "http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.jpg"
     tile_layer = "http://{s}.tile.stamen.com/terrain/{z}/{x}/{y}.jpg"
-    html = pyLeaflet.plotWithMap(fig,tile_layer = tile_layer)
-
-    if save_to_file is not None:
-        fout = open(save_to_file,'w')
-        fout.write(html)
-        fout.close()
+    html = pyLeaflet.plotWithMap(fig,tile_layer = tile_layer,saveAs=saveAs)
 
     return html
 
-def render_csv_file(fname,delimiter=',',save_to_file=None, **kwargs):
+def render_csv_file(fname,delimiter=',',saveAs=None, **kwargs):
     data = np.genfromtxt(fname,names=True,skip_header=0,delimiter=',')
     x, y =  data['lon'],data['lat']
 
@@ -103,18 +98,13 @@ def render_csv_file(fname,delimiter=',',save_to_file=None, **kwargs):
     ###############
     # tile_layer = "http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.jpg"
     tile_layer = "http://{s}.tile.stamen.com/terrain/{z}/{x}/{y}.jpg"
-    html = pyLeaflet.plotWithMap(fig,tile_layer = tile_layer)
-
-    if save_to_file is not None:
-        fout = open(save_to_file,'w')
-        fout.write(html)
-        fout.close()
+    html = pyLeaflet.plotWithMap(fig,tile_layer = tile_layer,saveAs=saveAs)
 
     return html
 
 
-# example1(save_to_file='example1.html')
-render_csv_file('example.csv',linewidths=0,marker='v')
+example1(saveAs="pyLeaflet_example.html")
+# render_csv_file('example.csv',linewidths=0,marker='v')
 
 
 

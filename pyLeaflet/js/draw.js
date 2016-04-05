@@ -377,4 +377,14 @@ d3collectionpaths
 
 g2.selectAll('.line')
     .attr("d", ppath);
-
+g2.selectAll('.path')
+    .attr("d", pathpath)
+g2.selectAll('.collectionpath')
+    .attr("transform", collectionpath_transformFunc)
+g2.selectAll('.markerpath')
+    .attr("transform", collectionpath_transformFunc)
+g2.selectAll("circle")
+    .attr("cx", function (d) { return map.latLngToLayerPoint(d.latLng).x;})
+    .attr("cy", function (d) { return map.latLngToLayerPoint(d.latLng).y;})
+g2.selectAll('.displaypath')
+    .attr("transform", displaypath_translate)

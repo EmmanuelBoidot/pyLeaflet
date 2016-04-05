@@ -18,6 +18,7 @@ setup(name='pyLeaflet',
                                   'images/layers.png',
                                   'images/marker-icon-2x.png',
                                   'images/marker-icon.png',
-                                  'images/marker-shadow.png'
+                                  'images/marker-shadow.png',
+                                  'images/favicon.ico'
                       ]}
      )

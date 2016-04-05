@@ -15,10 +15,13 @@ MAP_HTML = jinja2.Template("""
 <script type="text/javascript" src={{mpld3_url}}></script>
 <script type='text/javascript' src={{leaflet_js_url}}></script>
 <link rel="stylesheet" href={{leaflet_css_url}} type="text/css"/>
-<link rel="stylesheet" href={{pyLeaflet_css_url}} type="text/css"/>
-<script type="text/javascript" src={{data_url}}></script>
+<script type="text/javascript">
+{{data_content}}
+</script>
 
-
+<style>
+{{pyLeaflet_css_content}}
+</style>
 <style>
 body {
     min-width: {{mapWidth}}px;
@@ -161,12 +164,14 @@ map.on('zoomend', function() {
   g2.selectAll('.displaypath')
     .attr("transform", displaypath_translate)
 });
-
 </script>
-<script type="text/javascript" src={{draw_js_url}}></script>
+
+<script type="text/javascript">
+{{draw_js_content}}
+</script>
 """)
 
-def plotWithMap(fig,tile_layer = "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",mapWidth=1040,mapHeight=800, **kwargs):
+def plotWithMap(fig,tile_layer = "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",mapWidth=1040,mapHeight=800,saveAs="", **kwargs):
   figid = 'fig_' + get_id(fig) + str(int(random.random() * 1E10))
 
   renderer = MPLD3Renderer()
@@ -231,48 +236,72 @@ def plotWithMap(fig,tile_layer = "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.
   datafile.write('mdata = '+json.dumps(figure_json))
   datafile.close()
 
-  kwargs['mpld3_url'] = '/mpld3.js'
-  kwargs['d3_url'] = '/d3.js'
-  files = {'/mpld3.js': ["text/javascript",
-                      open(mpld3.urls.MPLD3MIN_LOCAL, 'r').read()],
-            '/d3.js': ["text/javascript",
-                      open(mpld3.urls.D3_LOCAL, 'r').read()],
-            '/draw.js': ["text/javascript",
-                      open(os.path.join(os.path.dirname(__file__), 'js/draw.js'),'r').read()],
-            '/pyLeaflet.css': ["text/css",
-                      open(os.path.join(os.path.dirname(__file__), 'css/pyLeaflet.css'),'r').read()],
-            '/leaflet.js': ["text/javascript",
-                      open(os.path.join(os.path.dirname(__file__), 'js/leaflet.js'),'r').read()],
-            '/leaflet.css': ["text/css",
-                      open(os.path.join(os.path.dirname(__file__), 'css/leaflet.css'),'r').read()],
-            '/images/layers-2x.png': ["text/css",
-                      open(os.path.join(os.path.dirname(__file__), 'images/layers-2x.png'),'r').read()],
-            '/images/layers.png': ["text/css",
-                      open(os.path.join(os.path.dirname(__file__), 'images/layers.png'),'r').read()],
-            '/images/marker-icon-2x.png': ["text/css",
-                      open(os.path.join(os.path.dirname(__file__), 'images/marker-icon-2x.png'),'r').read()],
-            '/images/marker-icon.png': ["text/css",
-                      open(os.path.join(os.path.dirname(__file__), 'images/marker-icon.png'),'r').read()],
-            '/images/marker-shadow.png': ["text/css",
-                      open(os.path.join(os.path.dirname(__file__), 'images/marker-shadow.png'),'r').read()],
-            '/data.js': ["text/javascript",
-                      open(datafile.name,'r').read()]}
+  if saveAs=="":
+    kwargs['mpld3_url'] = '/mpld3.js'
+    kwargs['d3_url'] = '/d3.js'
+    kwargs['leaflet_js_url'] = '/leaflet.js'
+    kwargs['leaflet_css_url'] = '/leaflet.css'
+    files = {'/mpld3.js': ["text/javascript",
+                        open(mpld3.urls.MPLD3MIN_LOCAL, 'r').read()],
+              '/d3.js': ["text/javascript",
+                        open(mpld3.urls.D3_LOCAL, 'r').read()],
+              '/leaflet.js': ["text/javascript",
+                        open(os.path.join(os.path.dirname(__file__), 'js/leaflet.js'),'r').read()],
+              '/leaflet.css': ["text/css",
+                        open(os.path.join(os.path.dirname(__file__), 'css/leaflet.css'),'r').read()],
+              '/images/layers-2x.png': ["text/css",
+                        open(os.path.join(os.path.dirname(__file__), 'images/layers-2x.png'),'r').read()],
+              '/images/layers.png': ["text/css",
+                        open(os.path.join(os.path.dirname(__file__), 'images/layers.png'),'r').read()],
+              '/images/marker-icon-2x.png': ["text/css",
+                        open(os.path.join(os.path.dirname(__file__), 'images/marker-icon-2x.png'),'r').read()],
+              '/images/marker-icon.png': ["text/css",
+                        open(os.path.join(os.path.dirname(__file__), 'images/marker-icon.png'),'r').read()],
+              '/images/marker-shadow.png': ["text/css",
+                        open(os.path.join(os.path.dirname(__file__), 'images/marker-shadow.png'),'r').read()],
+              '/favicon.ico': ["text/css",
+                        open(os.path.join(os.path.dirname(__file__), 'images/favicon.ico'),'r').read()],
+              '/data.js': ["text/javascript",
+                        open(datafile.name,'r').read()]}
+  else:
+    kwargs['mpld3_url'] = 'http://mpld3.github.io/js/mpld3.v0.2.js'
+    kwargs['d3_url'] = 'https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.16/d3.min.js'
+    kwargs['leaflet_js_url'] = "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"
+    kwargs['leaflet_css_url'] = "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css"
+    files = { '/images/layers-2x.png': ["text/css",
+                        open(os.path.join(os.path.dirname(__file__), 'images/layers-2x.png'),'r').read()],
+              '/images/layers.png': ["text/css",
+                        open(os.path.join(os.path.dirname(__file__), 'images/layers.png'),'r').read()],
+              '/images/marker-icon-2x.png': ["text/css",
+                        open(os.path.join(os.path.dirname(__file__), 'images/marker-icon-2x.png'),'r').read()],
+              '/images/marker-icon.png': ["text/css",
+                        open(os.path.join(os.path.dirname(__file__), 'images/marker-icon.png'),'r').read()],
+              '/images/marker-shadow.png': ["text/css",
+                        open(os.path.join(os.path.dirname(__file__), 'images/marker-shadow.png'),'r').read()],
+              '/favicon.ico': ["text/css",
+                        open(os.path.join(os.path.dirname(__file__), 'images/favicon.ico'),'r').read()],
+              '/data.js': ["text/javascript",
+                        open(datafile.name,'r').read()]}
 
   html = MAP_HTML.render(figid=json.dumps(figid),
-                        mapWidth = mapWidth,
-                        mapHeight=mapHeight,
+                         mapWidth = mapWidth,
+                         mapHeight=mapHeight,
                          d3_url=kwargs['d3_url'],
                          mpld3_url=kwargs['mpld3_url'],
-                         draw_js_url='draw.js',
-                         data_url='data.js',
-                         leaflet_js_url='leaflet.js',
-                         leaflet_css_url='leaflet.css',
+                         draw_js_content=open(os.path.join(os.path.dirname(__file__), 'js/draw.js'),'r').read(),
+                         data_content=open(datafile.name,'r').read(),
+                         leaflet_js_url=kwargs['leaflet_js_url'],
+                         leaflet_css_url=kwargs['leaflet_css_url'],
                          extra_css=extra_css,
                          extra_js=extra_js,
-                         pyLeaflet_css_url='pyLeaflet.css',
+                         pyLeaflet_css_content=open(os.path.join(os.path.dirname(__file__), 'css/pyLeaflet.css'),'r').read(),
                          leaflet_init_js=leaflet_init_js,
                          tile_layer=tile_layer)
 
+  if saveAs!="":
+    with open(saveAs, "w") as text_file:
+      text_file.write(html)
+  
   serve_and_open(html, ip='localhost', port=8080, n_retries=50, files=files)
   os.unlink(datafile.name)
   return html

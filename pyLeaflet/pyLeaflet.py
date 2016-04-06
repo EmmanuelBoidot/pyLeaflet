@@ -15,6 +15,7 @@ MAP_HTML = jinja2.Template("""
 <script type="text/javascript" src={{mpld3_url}}></script>
 <script type='text/javascript' src={{leaflet_js_url}}></script>
 <link rel="stylesheet" href={{leaflet_css_url}} type="text/css"/>
+<link rel="stylesheet" href={{mpld3_css_url}} type="text/css"/>
 <script type="text/javascript">
 {{data_content}}
 </script>
@@ -238,6 +239,7 @@ def plotWithMap(fig,tile_layer = "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.
 
   if saveAs is None:
     kwargs['mpld3_url'] = '/mpld3.js'
+    kwargs['mpld3_css_url'] = '/mpld3.css'
     kwargs['d3_url'] = '/d3.js'
     kwargs['leaflet_js_url'] = '/leaflet.js'
     kwargs['leaflet_css_url'] = '/leaflet.css'
@@ -249,6 +251,8 @@ def plotWithMap(fig,tile_layer = "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.
                         open(os.path.join(os.path.dirname(__file__), 'js/leaflet.js'),'r').read()],
               '/leaflet.css': ["text/css",
                         open(os.path.join(os.path.dirname(__file__), 'css/leaflet.css'),'r').read()],
+              '/mpld3.css': ["text/css",
+                        open(os.path.join(os.path.dirname(__file__), 'css/mpld3.css'),'r').read()],
               '/images/layers-2x.png': ["text/css",
                         open(os.path.join(os.path.dirname(__file__), 'images/layers-2x.png'),'r').read()],
               '/images/layers.png': ["text/css",
@@ -265,6 +269,7 @@ def plotWithMap(fig,tile_layer = "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.
                         open(datafile.name,'r').read()]}
   else:
     kwargs['mpld3_url'] = 'http://mpld3.github.io/js/mpld3.v0.2.js'
+    kwargs['mpld3_css_url'] = 'http://mpld3.github.io/_static/mpld3.css'
     kwargs['d3_url'] = 'https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.16/d3.min.js'
     kwargs['leaflet_js_url'] = "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"
     kwargs['leaflet_css_url'] = "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css"
@@ -292,6 +297,7 @@ def plotWithMap(fig,tile_layer = "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.
                          data_content=open(datafile.name,'r').read(),
                          leaflet_js_url=kwargs['leaflet_js_url'],
                          leaflet_css_url=kwargs['leaflet_css_url'],
+                         mpld3_css_url=kwargs['mpld3_css_url'],
                          extra_css=extra_css,
                          extra_js=extra_js,
                          pyLeaflet_css_content=open(os.path.join(os.path.dirname(__file__), 'css/pyLeaflet.css'),'r').read(),

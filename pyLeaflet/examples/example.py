@@ -36,7 +36,7 @@ def example1(saveAs=None):
     t = np.linspace(1,100,len(x))
     t2 = np.linspace(1,100,len(x2))
 
-    fig, (ax1,ax2,ax3) = plt.subplots(figsize=(18, 18),nrows=3,ncols=1)
+    fig, (ax1,ax2,ax3) = plt.subplots(figsize=(14, 18),nrows=3,ncols=1)
 
     ax1.add_patch(patch)
     points = ax1.plot(x, y, 'b^', ms=10)
